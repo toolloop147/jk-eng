@@ -18,6 +18,8 @@ jk-eng/
 
 ## 시작하기
 
+이 레포를 클론한 뒤, **레포 루트에서** 아래 순서대로 각 폴더로 이동해 실행합니다.
+
 ### 0. 공유 로그인 DB 실행
 
 jk-op / jk-ins / jk-eng이 동일한 PostgreSQL 컨테이너(`jk-auth-postgres`)를 공유합니다.
