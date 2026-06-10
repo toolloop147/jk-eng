@@ -6,8 +6,9 @@
 
 ```
 jk-eng/
-├── frontend/   # Next.js (React)
-└── backend/    # Node.js (Express + TypeScript)
+├── package.json   # 루트 — npm install / npm run dev
+├── backend/       # Express API
+└── frontend/      # Next.js
 ```
 
 ## 사전 요구사항
@@ -36,35 +37,20 @@ docker compose up -d
 DB: `jk_auth` (포트 5432)  
 테이블: `users`, `user_app_access`
 
-### 1. 환경 변수 설정
+### 1. 설치 및 실행 (레포 루트)
 
 ```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.local
+npm install          # backend + frontend 한 번에 설치
+npm run dev          # API(4000) + 웹(3000) 동시 실행
 ```
 
-### 2. 백엔드 실행
+`npm run dev` 실행 시 `.env` 파일이 없으면 자동으로 example에서 복사됩니다.
 
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-API: http://localhost:4000  
-헬스체크: http://localhost:4000/health  
-인증 API: `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`
-
-### 3. 프론트엔드 실행
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-앱: http://localhost:3000  
-로그인: http://localhost:3000/login
+| 서비스 | URL |
+|--------|-----|
+| 웹 (로그인) | http://localhost:3000/login |
+| API | http://localhost:4000 |
+| 헬스체크 | http://localhost:4000/health |
 
 **개발자 계정:** `admin` / `admin123`
 
@@ -88,12 +74,11 @@ git push origin dev-jin
 `dev-jin` / `dev-jun` / `dev-hyun`에 **push하면 GitHub Actions가 자동으로 `main` 대상 PR을 생성**합니다.  
 CI 빌드가 통과하고 레포에서 **Allow auto-merge**가 켜져 있으면 squash 머지까지 자동 진행됩니다.
 
-## 스크립트
+## 스크립트 (레포 루트)
 
-| 위치 | 명령 | 설명 |
-|------|------|------|
-| `frontend/` | `npm run dev` | 개발 서버 |
-| `frontend/` | `npm run build` | 프로덕션 빌드 |
-| `backend/` | `npm run dev` | 개발 서버 (hot reload) |
-| `backend/` | `npm run build` | TypeScript 컴파일 |
-| `backend/` | `npm start` | 컴파일된 서버 실행 |
+| 명령 | 설명 |
+|------|------|
+| `npm install` | backend + frontend 의존성 설치 |
+| `npm run dev` | API + 웹 개발 서버 동시 실행 |
+| `npm run build` | backend + frontend 빌드 |
+| `npm run setup` | `.env` 파일 수동 생성 |
