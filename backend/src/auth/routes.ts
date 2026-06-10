@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { getPool } from "../db/pool";
+import { normalizeEmail } from "./email";
 import { authenticate } from "./middleware";
 
 const router = Router();
@@ -35,7 +36,7 @@ router.post("/register", async (req: Request, res: Response) => {
       `INSERT INTO users (email, password_hash, name)
        VALUES ($1, $2, $3)
        RETURNING id, email, name`,
-      [email.toLowerCase().trim(), passwordHash, name ?? null]
+      [normalizeEmail(email), passwordHash, name ?? null]
     );
     const user = userResult.rows[0];
     await client.query(
@@ -87,11 +88,11 @@ router.post("/login", async (req: Request, res: Response) => {
   const userResult = await getPool().query(
     `SELECT id, email, name, password_hash, is_active
      FROM users WHERE email = $1`,
-    [email.toLowerCase().trim()]
+    [normalizeEmail(email)]
   );
 
   if (userResult.rows.length === 0) {
-    res.status(401).json({ error: "이메일 또는 비밀번호가 올바르지 않습니다." });
+    res.status(401).json({ error: "아이디 또는 비밀번호가 올바르지 않습니다." });
     return;
   }
 

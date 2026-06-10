@@ -20,13 +20,16 @@ jk-eng/
 
 ### 0. 공유 로그인 DB 실행
 
-jk-op / jk-ins / jk-eng 프로젝트가 동일한 PostgreSQL 컨테이너(`jk-auth-postgres`)를 사용합니다.
-어느 프로젝트에서든 한 번만 실행하면 됩니다.
+jk-op / jk-ins / jk-eng이 동일한 PostgreSQL 컨테이너(`jk-auth-postgres`)를 공유합니다.
+세 레포 중 **어느 것의 `docker/auth-db`에서 실행해도 되며**, 한 번만 기동하면 됩니다.
 
 ```bash
-cd docker/auth-db
+cd docker/auth-db   # 이 레포(jk-eng) 루트 기준
 docker compose up -d
 ```
+
+> 레포를 나란히 클론해 둔 경우에도, 각 레포 안의 `docker/auth-db`로 이동하면 됩니다.  
+> 절대 경로는 환경마다 다를 수 있으므로, 항상 **현재 레포 루트에서** 위 명령을 실행하세요.
 
 DB: `jk_auth` (포트 5432)  
 테이블: `users`, `user_app_access`
@@ -58,7 +61,10 @@ npm install
 npm run dev
 ```
 
-앱: http://localhost:3000
+앱: http://localhost:3000  
+로그인: http://localhost:3000/login
+
+**개발자 계정:** `admin` / `admin123`
 
 ## 스크립트
 
