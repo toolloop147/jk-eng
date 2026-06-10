@@ -2,7 +2,7 @@
 INSERT INTO users (email, password_hash, name, is_active)
 VALUES (
     'admin@jk.local',
-    '$2b$10$gKKovjEglIa2lvF/qg5GMOSHCysM6JszjlC2UawOBoGDyN7lwdSF.',
+    '$2b$10$rEokbIZCd9Oky02sFypAo.0vMCR30t/5.gQqIvB5cHDWAh7K.GM3O',
     'Administrator',
     true
 )

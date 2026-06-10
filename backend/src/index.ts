@@ -6,6 +6,7 @@ import cors from "cors";
 import express from "express";
 import authRoutes from "./auth/routes";
 import { getPool } from "./db/pool";
+import { seedAdmin } from "./db/seed";
 
 const app = express();
 const port = Number(process.env.PORT) || 4000;
@@ -25,6 +26,11 @@ app.get("/health", async (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  try {
+    await seedAdmin();
+  } catch (err) {
+    console.warn("Admin seed skipped:", err);
+  }
   console.log(`API server running on http://localhost:${port}`);
 });

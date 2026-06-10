@@ -104,7 +104,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
   const valid = await bcrypt.compare(password, user.password_hash);
   if (!valid) {
-    res.status(401).json({ error: "이메일 또는 비밀번호가 올바르지 않습니다." });
+    res.status(401).json({ error: "아이디 또는 비밀번호가 올바르지 않습니다." });
     return;
   }
 
