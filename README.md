@@ -89,7 +89,12 @@ git push origin dev/jin
 `main`, `develop`을 제외한 브랜치에 **push하면 GitHub Actions가 자동으로 `develop` 대상 PR을 생성**합니다.  
 **충돌이 없을 때만** auto-merge가 진행됩니다. 충돌이 있으면 PR만 열리고 머지는 되지 않습니다.
 
-> 자동 머지가 완료되려면 GitHub 레포 **Settings → General → Allow auto-merge**가 켜져 있어야 합니다.
+> **GitHub Actions 설정 (필수)**  
+> Settings → Actions → General → Workflow permissions에서  
+> - **Read and write permissions** 선택  
+> - **Allow GitHub Actions to create and approve pull requests** 체크  
+>
+> **자동 머지**를 쓰려면 Settings → General → **Allow auto-merge**도 켜야 합니다.
 
 ## 스크립트 (레포 루트)
 
