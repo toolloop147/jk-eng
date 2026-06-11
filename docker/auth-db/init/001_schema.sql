@@ -1,4 +1,4 @@
--- Shared login schema for jk-op, jk-ins, jk-eng
+-- Shared database for jk-op, jk-ins, jk-eng (auth + business tables)
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 

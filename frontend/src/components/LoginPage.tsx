@@ -4,7 +4,6 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/api";
 import { setToken } from "@/lib/auth";
-import { APP_TITLE } from "@/lib/config";
 import { ToolloopLogo } from "./ToolloopLogo";
 
 export function LoginPage() {
@@ -33,16 +32,12 @@ export function LoginPage() {
     <div className="tl-login-bg flex min-h-full flex-1 items-center justify-center px-4 py-10 sm:px-6">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
-          <ToolloopLogo size="lg" />
+          <ToolloopLogo size="lg" align="center" />
         </div>
 
         <div className="tl-card rounded-2xl p-6 shadow-xl sm:p-8">
           <div className="mb-6 text-center">
-            <span className="tl-badge mb-3 inline-block">{APP_TITLE}</span>
             <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">로그인</h1>
-            <p className="mt-2 text-sm text-slate-500">
-              Toolloop 계정으로 서비스에 접속하세요.
-            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

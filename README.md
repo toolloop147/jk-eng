@@ -15,13 +15,27 @@ jk-eng/
 
 - Node.js 20+
 - npm
-- Docker Desktop (공유 로그인 DB)
+- Docker Desktop (공유 PostgreSQL)
+
+## 공유 데이터베이스
+
+**jk-op / jk-ins / jk-eng은 PostgreSQL 데이터베이스 하나(`jk_auth`)를 공유합니다.**  
+로그인(`users`, `user_app_access`)뿐 아니라, 이후 추가하는 업무 테이블도 모두 이 DB에 넣습니다.
+
+| 항목 | 값 |
+|------|-----|
+| 컨테이너 | `jk-auth-postgres` (한 번만 실행) |
+| DB 이름 | `jk_auth` |
+| 접속 URL | `postgresql://jk:jk@localhost:5432/jk_auth` |
+| 프로젝트별 구분 | `APP_CODE` — `op` / `ins` / `eng` |
+
+세 백엔드의 `backend/.env`에 **동일한 `DATABASE_URL`** 이 설정되어 있어야 합니다.
 
 ## 시작하기
 
 이 레포를 클론한 뒤, **레포 루트에서** 아래 순서대로 각 폴더로 이동해 실행합니다.
 
-### 0. 공유 로그인 DB 실행
+### 0. 공유 DB 실행
 
 jk-op / jk-ins / jk-eng이 동일한 PostgreSQL 컨테이너(`jk-auth-postgres`)를 공유합니다.
 세 레포 중 **어느 것의 `docker/auth-db`에서 실행해도 되며**, 한 번만 기동하면 됩니다.

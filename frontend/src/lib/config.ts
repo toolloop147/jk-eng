@@ -8,3 +8,23 @@ export const DASHBOARD_ITEMS = [
   { title: "기술 문서", desc: "기술 문서 모듈입니다." },
   { title: "이슈 트래킹", desc: "이슈 트래킹 모듈입니다." },
 ];
+
+export const SIDEBAR_PRIMARY = [{ id: "dashboard", label: "대시보드", href: "/" }];
+
+export const SIDEBAR_LINKS = [
+  { id: "projects", label: "프로젝트", href: "#" },
+  { id: "issues", label: "이슈 트래킹", href: "#" },
+  { id: "docs", label: "기술 문서", href: "#" },
+];
+
+export const SIDEBAR_GROUPS: {
+  id: string;
+  label: string;
+  defaultOpen?: boolean;
+  items: { id: string; label: string; href: string }[];
+}[] = [];
+
+export const SIDEBAR_SECONDARY = [
+  { id: "reports", label: "리포트", href: "#" },
+  { id: "settings", label: "설정", href: "#" },
+];

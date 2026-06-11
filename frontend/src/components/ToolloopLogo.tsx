@@ -1,42 +1,35 @@
 interface ToolloopLogoProps {
   size?: "sm" | "md" | "lg";
-  variant?: "light" | "dark";
+  variant?: "light" | "dark" | "brand";
+  align?: "left" | "center";
+  showSubtitle?: boolean;
 }
 
 const sizes = {
-  sm: { icon: 28, text: "text-lg" },
-  md: { icon: 36, text: "text-xl" },
-  lg: { icon: 44, text: "text-2xl" },
+  sm: { title: "text-sm leading-tight", subtitle: "text-[10px] leading-tight" },
+  md: { title: "text-xl leading-tight", subtitle: "text-xs leading-tight" },
+  lg: { title: "text-2xl leading-tight", subtitle: "text-sm leading-tight" },
 };
 
-export function ToolloopLogo({ size = "md", variant = "light" }: ToolloopLogoProps) {
+export function ToolloopLogo({
+  size = "md",
+  variant = "light",
+  align = "left",
+  showSubtitle = true,
+}: ToolloopLogoProps) {
   const s = sizes[size];
-  const textColor = variant === "light" ? "text-white" : "text-slate-900";
-  const subColor = variant === "light" ? "text-cyan-200" : "text-cyan-600";
+  const titleColor =
+    variant === "light" ? "text-white" : variant === "brand" ? "text-[var(--tl-accent)]" : "text-slate-900";
+  const subColor =
+    variant === "light" ? "text-teal-200" : variant === "brand" ? "text-slate-400" : "text-[var(--tl-accent)]";
+  const alignClass = align === "center" ? "text-center items-center" : "text-left items-start";
 
   return (
-    <div className="flex items-center gap-3">
-      <svg
-        width={s.icon}
-        height={s.icon}
-        viewBox="0 0 48 48"
-        fill="none"
-        aria-hidden
-        className="shrink-0"
-      >
-        <rect width="48" height="48" rx="12" className="fill-cyan-500" />
-        <path
-          d="M14 24c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10"
-          stroke="white"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <circle cx="24" cy="24" r="3" fill="white" />
-      </svg>
-      <div>
-        <p className={`font-bold tracking-tight ${textColor} ${s.text}`}>Toolloop</p>
-        <p className={`text-xs font-medium ${subColor}`}>Enterprise Platform</p>
-      </div>
+    <div className={`flex flex-col ${alignClass}`}>
+      <p className={`font-bold tracking-tight whitespace-nowrap ${titleColor} ${s.title}`}>제이케이라이팅</p>
+      {showSubtitle && (
+        <p className={`mt-1 font-medium ${subColor} ${s.subtitle}`}>Toolloop Enterprise Platform</p>
+      )}
     </div>
   );
 }
