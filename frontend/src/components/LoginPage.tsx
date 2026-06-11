@@ -4,12 +4,20 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/api";
 import { setToken } from "@/lib/auth";
+import { formatPhoneInput } from "@/lib/formatPhone";
 import { ToolloopLogo } from "./ToolloopLogo";
+
+function handleLoginIdChange(value: string) {
+  if (!value || /^[a-zA-Z]/.test(value)) {
+    return value;
+  }
+  return formatPhoneInput(value);
+}
 
 export function LoginPage() {
   const router = useRouter();
-  const [loginId, setLoginId] = useState("admin");
-  const [password, setPassword] = useState("admin123");
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -38,32 +46,39 @@ export function LoginPage() {
         <div className="tl-card rounded-2xl p-6 shadow-xl sm:p-8">
           <div className="mb-6 text-center">
             <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">로그인</h1>
+            <p className="mt-2 text-sm text-slate-500">
+              기사는 발급 시 등록한 연락처와 비밀번호로 로그인합니다.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
             <div>
-              <label htmlFor="loginId" className="tl-label">
-                아이디
+              <label htmlFor="eng-login-id" className="tl-label">
+                연락처
               </label>
               <input
-                id="loginId"
+                id="eng-login-id"
+                name="jk-eng-login-id"
                 type="text"
-                autoComplete="username"
+                inputMode="tel"
+                autoComplete="off"
                 value={loginId}
-                onChange={(e) => setLoginId(e.target.value)}
+                onChange={(e) => setLoginId(handleLoginIdChange(e.target.value))}
                 className="tl-input"
-                placeholder="admin"
+                placeholder="010-1234-5678"
                 required
               />
+              <p className="mt-1.5 text-xs text-slate-400">관리자 계정은 admin을 입력하세요.</p>
             </div>
             <div>
-              <label htmlFor="password" className="tl-label">
+              <label htmlFor="eng-login-password" className="tl-label">
                 비밀번호
               </label>
               <input
-                id="password"
+                id="eng-login-password"
+                name="jk-eng-login-password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="off"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="tl-input"
