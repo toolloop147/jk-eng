@@ -3,6 +3,7 @@ interface ToolloopLogoProps {
   variant?: "light" | "dark" | "brand";
   align?: "left" | "center";
   showSubtitle?: boolean;
+  title?: string;
 }
 
 const sizes = {
@@ -16,6 +17,7 @@ export function ToolloopLogo({
   variant = "light",
   align = "left",
   showSubtitle = true,
+  title = "시큐리티",
 }: ToolloopLogoProps) {
   const s = sizes[size];
   const titleColor =
@@ -26,7 +28,7 @@ export function ToolloopLogo({
 
   return (
     <div className={`flex flex-col ${alignClass}`}>
-      <p className={`font-bold tracking-tight whitespace-nowrap ${titleColor} ${s.title}`}>제이케이라이팅</p>
+      <p className={`font-bold tracking-tight whitespace-nowrap ${titleColor} ${s.title}`}>{title}</p>
       {showSubtitle && (
         <p className={`mt-1 font-medium ${subColor} ${s.subtitle}`}>Toolloop Enterprise Platform</p>
       )}
