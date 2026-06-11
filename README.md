@@ -68,25 +68,13 @@ npm run dev          # API(4000) + 웹(3000) 동시 실행
 
 **개발자 계정:** `admin` / `admin123`
 
-## Git 브랜치 워크플로
+## Git 브랜치
 
 | 브랜치 | 용도 |
 |--------|------|
 | `main` | 배포 기준 브랜치 |
-| `dev-jin` | jin 개발 브랜치 |
-| `dev-jun` | jun 개발 브랜치 |
-| `dev-hyun` | hyun 개발 브랜치 |
 
-```bash
-git checkout dev-jin          # 본인 브랜치로 전환
-# ... 작업 후 ...
-git add .
-git commit -m "feat: 변경 내용"
-git push origin dev-jin
-```
-
-`dev-jin` / `dev-jun` / `dev-hyun`에 **push하면 GitHub Actions가 자동으로 `main` 대상 PR을 생성**합니다.  
-CI 빌드가 통과하고 레포에서 **Allow auto-merge**가 켜져 있으면 squash 머지까지 자동 진행됩니다.
+`main`에 push하거나 PR을 열면 GitHub Actions CI가 빌드를 실행합니다.
 
 ## 스크립트 (레포 루트)
 
