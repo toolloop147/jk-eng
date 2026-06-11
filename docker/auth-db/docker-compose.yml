@@ -1,0 +1,22 @@
+services:
+  jk-auth-postgres:
+    image: postgres:16-alpine
+    container_name: jk-auth-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: jk
+      POSTGRES_PASSWORD: jk
+      POSTGRES_DB: jk_auth
+    volumes:
+      - jk_auth_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jk -d jk_auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  jk_auth_data:

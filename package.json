@@ -1,0 +1,22 @@
+{
+  "name": "jk-eng",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "setup": "node scripts/setup-env.mjs",
+    "dev": "npm run setup && concurrently -k -n api,web -c blue,magenta \"npm run dev -w jk-eng-backend\" \"npm run dev -w jk-eng-frontend\"",
+    "build": "npm run build -w jk-eng-backend && npm run build -w jk-eng-frontend",
+    "start": "concurrently -k -n api,web \"npm run start -w jk-eng-backend\" \"npm run start -w jk-eng-frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "optionalDependencies": {
+    "@next/swc-linux-x64-gnu": "16.2.9",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.0",
+    "lightningcss-linux-x64-gnu": "1.32.0"
+  }
+}
