@@ -51,6 +51,9 @@ docker compose up -d
 DB: `jk_auth` (포트 5432)  
 테이블: `users`, `user_app_access`
 
+`git pull` / `git merge` 후 `docker/auth-db/init`에 새 SQL이 있으면 **post-merge 훅**이 `npm run db:migrate`를 자동 실행합니다.  
+최초 1회: `npm run setup`으로 훅을 설치하세요.
+
 ### 1. 설치 및 실행 (레포 루트)
 
 ```bash
@@ -106,7 +109,7 @@ git push origin dev/jin
 | `npm install`        | backend + frontend 의존성 설치  |
 | `npm run dev`        | API + 웹 개발 서버 동시 실행    |
 | `npm run build`      | backend + frontend 빌드         |
-| `npm run setup`      | `.env` 파일 수동 생성           |
+| `npm run setup`      | `.env` 생성 + git post-merge 훅 설치 |
 | `npm run db:migrate` | jk-eng 업무 테이블 마이그레이션 |
 
 ## 첨부파일 저장 (배포 대비)
