@@ -4,16 +4,27 @@ dotenv.config();
 
 import cors from "cors";
 import express from "express";
+import path from "path";
 import authRoutes from "./auth/routes";
+import fileRoutes from "./files/routes";
+import { runMigrations } from "./db/migrate";
 import { getPool } from "./db/pool";
 import { seedAdmin } from "./db/seed";
+import { getUploadRoot, isPrivateUploadPath } from "./uploads/storage";
 
 const app = express();
 const port = Number(process.env.PORT) || 4000;
 const frontendOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(cors({ origin: frontendOrigin }));
-app.use(express.json());
+app.use(express.json({ limit: "25mb" }));
+app.use("/uploads", (req, res, next) => {
+  if (isPrivateUploadPath(req.path)) {
+    res.status(404).end();
+    return;
+  }
+  express.static(path.join(getUploadRoot()))(req, res, next);
+});
 
 app.get("/health", async (_req, res) => {
   try {
@@ -25,12 +36,14 @@ app.get("/health", async (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/files", fileRoutes);
 
 app.listen(port, async () => {
   try {
+    await runMigrations();
     await seedAdmin();
   } catch (err) {
-    console.warn("Admin seed skipped:", err);
+    console.warn("Database setup skipped:", err);
   }
   console.log(`API server running on http://localhost:${port}`);
 });
