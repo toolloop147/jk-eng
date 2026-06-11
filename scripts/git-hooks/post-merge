@@ -1,0 +1,32 @@
+#!/bin/sh
+# After git pull / git merge: apply new docker/auth-db/init SQL migrations (003+).
+
+ROOT=$(git rev-parse --show-toplevel)
+cd "$ROOT" || exit 0
+
+if [ ! -d "docker/auth-db/init" ]; then
+  exit 0
+fi
+
+if ! git rev-parse ORIG_HEAD >/dev/null 2>&1; then
+  exit 0
+fi
+
+CHANGED=$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD 2>/dev/null \
+  | grep -E '^docker/auth-db/init/[0-9]{3}_.+\.sql$' || true)
+
+if [ -z "$CHANGED" ]; then
+  exit 0
+fi
+
+echo "[post-merge] DB migration files changed:"
+echo "$CHANGED" | sed 's/^/  - /'
+echo "[post-merge] Running npm run db:migrate..."
+
+if ! npm run db:migrate; then
+  echo "[post-merge] Migration failed. Is PostgreSQL running?" >&2
+  echo "[post-merge] Try: cd docker/auth-db && docker compose up -d" >&2
+  exit 1
+fi
+
+echo "[post-merge] Migrations complete."
