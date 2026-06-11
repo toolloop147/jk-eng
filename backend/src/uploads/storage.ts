@@ -15,7 +15,7 @@ export function getUploadRoot(): string {
 }
 
 export function publicApiBase(): string {
-  return process.env.API_PUBLIC_URL || `http://localhost:${process.env.PORT || 4000}`;
+  return process.env.API_PUBLIC_URL || `http://localhost:${process.env.PORT || 4002}`;
 }
 
 export function resolveStoredFilePath(storedPath: string): string {
