@@ -44,6 +44,27 @@ body {
   background: linear-gradient(135deg, #1a3a32 0%, #14918b 100%);
 }
 
+.tl-page-header {
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #1a3a32 0%, #14918b 100%);
+  padding: 0.625rem 1rem;
+}
+
+.tl-page-header-group {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #c8ebe8;
+}
+
+.tl-page-header-title {
+  margin-top: 0.125rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: white;
+}
+
 .tl-badge {
   border-radius: 9999px;
   background: var(--tl-accent-light);
@@ -252,6 +273,7 @@ body {
   font-weight: 400;
   color: #333;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
   position: relative;
   transition: color 0.15s;

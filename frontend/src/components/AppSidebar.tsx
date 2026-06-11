@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { SIDEBAR_GROUPS, SIDEBAR_LINKS, SIDEBAR_PRIMARY, SIDEBAR_SECONDARY } from "@/lib/config";
 import { ToolloopLogo } from "./ToolloopLogo";
@@ -51,23 +52,25 @@ function PowerIcon() {
 function NavItem({
   label,
   active,
-  onClick,
+  href,
   arrow,
+  onNavigate,
 }: {
   label: string;
   active?: boolean;
-  onClick?: () => void;
+  href: string;
   arrow?: "right";
+  onNavigate?: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <Link
+      href={href}
+      onClick={onNavigate}
       className={`tl-sidebar-item ${active ? "tl-sidebar-item-active" : ""}`}
     >
       <span>{label}</span>
       {arrow === "right" && <ChevronRight />}
-    </button>
+    </Link>
   );
 }
 
@@ -100,11 +103,23 @@ export function AppSidebar({
 
       <nav className="tl-sidebar-nav">
         {SIDEBAR_PRIMARY.map((item) => (
-          <NavItem key={item.id} label={item.label} active={activeId === item.id} />
+          <NavItem
+            key={item.id}
+            label={item.label}
+            href={item.href}
+            active={activeId === item.id}
+            onNavigate={onMobileClose}
+          />
         ))}
 
         {SIDEBAR_LINKS.map((item) => (
-          <NavItem key={item.id} label={item.label} active={activeId === item.id} />
+          <NavItem
+            key={item.id}
+            label={item.label}
+            href={item.href}
+            active={activeId === item.id}
+            onNavigate={onMobileClose}
+          />
         ))}
 
         {SIDEBAR_GROUPS.map((group) => {
@@ -121,9 +136,17 @@ export function AppSidebar({
               </button>
               {open && (
                 <div className="tl-sidebar-sub">
-                  {group.items.map((item) => (
-                    <NavItem key={item.id} label={item.label} active={activeId === item.id} />
-                  ))}
+                  {group.items.map((item) =>
+                    "href" in item && item.href ? (
+                      <NavItem
+                        key={item.id}
+                        label={item.label}
+                        href={item.href}
+                        active={activeId === item.id}
+                        onNavigate={onMobileClose}
+                      />
+                    ) : null,
+                  )}
                 </div>
               )}
             </div>
@@ -133,7 +156,14 @@ export function AppSidebar({
         {SIDEBAR_SECONDARY.length > 0 && <div className="tl-sidebar-divider" />}
 
         {SIDEBAR_SECONDARY.map((item) => (
-          <NavItem key={item.id} label={item.label} active={activeId === item.id} arrow="right" />
+          <NavItem
+            key={item.id}
+            label={item.label}
+            href={item.href}
+            active={activeId === item.id}
+            arrow="right"
+            onNavigate={onMobileClose}
+          />
         ))}
       </nav>
     </aside>
