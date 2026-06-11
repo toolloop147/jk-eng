@@ -84,3 +84,32 @@ npm run dev          # API(4000) + 웹(3000) 동시 실행
 | `npm run dev` | API + 웹 개발 서버 동시 실행 |
 | `npm run build` | backend + frontend 빌드 |
 | `npm run setup` | `.env` 파일 수동 생성 |
+| `npm run db:migrate` | jk-eng 업무 테이블 마이그레이션 |
+
+## 첨부파일 저장 (배포 대비)
+
+업무에서 올리는 파일은 **DB에 바이너리를 저장하지 않습니다.**  
+메타데이터는 PostgreSQL, 실제 파일은 **서버 디스크**에 저장됩니다.
+
+| 구분 | 저장 위치 | 내용 |
+|------|-----------|------|
+| 파일 메타 | `eng_stored_files` | 원본 파일명, 저장 경로, MIME, 용량 |
+| 실제 파일 | `UPLOAD_DIR/eng/{entityType}/{entityId}/` | jpg, png, pdf 등 |
+
+### 로컬 개발
+
+- 기본 저장 경로: `backend/uploads/` (`.gitignore` 대상)
+- 조회/다운로드: `GET /api/files/:id` (관리자 JWT 필요)
+- `/uploads/eng/` **직접 URL 접근 불가** (API 경유)
+
+### 가비아 클라우드 배포 시
+
+1. **PostgreSQL** — `DATABASE_URL` 설정
+2. **파일 저장소** — Git 밖 영구 디렉터리 지정
+   ```env
+   UPLOAD_DIR=/var/data/jk-eng/uploads
+   ```
+3. **백업** — DB와 `UPLOAD_DIR`을 **함께** 백업
+4. **프론트** — `NEXT_PUBLIC_API_URL`을 배포 API 주소로 설정
+
+배포 후 마이그레이션: `npm run db:migrate` (또는 API 기동 시 자동 실행)
