@@ -73,20 +73,28 @@ npm run dev          # API(4000) + 웹(3000) 동시 실행
 | 브랜치 | 용도 |
 |--------|------|
 | `main` | 배포 기준 브랜치 |
-| `dev-jin` | jin 개발 브랜치 |
-| `dev-jun` | jun 개발 브랜치 |
-| `dev-hyun` | hyun 개발 브랜치 |
+| `develop` | 통합 개발 브랜치 |
+| `dev/jin` | jin 개발 브랜치 |
+| `dev/jun` | jun 개발 브랜치 |
+| `dev/park` | park 개발 브랜치 |
 
 ```bash
-git checkout dev-jin          # 본인 브랜치로 전환
+git checkout dev/jin          # 본인 브랜치로 전환
 # ... 작업 후 ...
 git add .
 git commit -m "feat: 변경 내용"
-git push origin dev-jin
+git push origin dev/jin
 ```
 
-`dev-jin` / `dev-jun` / `dev-hyun`에 **push하면 GitHub Actions가 자동으로 `main` 대상 PR을 생성**합니다.  
-CI 빌드가 통과하고 레포에서 **Allow auto-merge**가 켜져 있으면 squash 머지까지 자동 진행됩니다.
+`main`, `develop`을 제외한 브랜치에 **push하면 GitHub Actions가 `develop` 대상 PR을 생성하고, 충돌이 없으면 squash merge까지 진행**합니다.  
+충돌이 있으면 PR만 열리고 머지는 되지 않습니다.
+
+> **GitHub Actions 설정 (필수)**  
+> Settings → Actions → General → Workflow permissions에서  
+> - **Read and write permissions** 선택  
+> - **Allow GitHub Actions to create and approve pull requests** 체크  
+>
+> Private 레포 + Free 플랜에서는 **Allow auto-merge**를 쓸 수 없으므로, 워크플로가 merge API로 직접 머지합니다.
 
 ## 스크립트 (레포 루트)
 
