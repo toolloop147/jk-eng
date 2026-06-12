@@ -92,7 +92,7 @@ export function LoginPage() {
 
         <div className="mb-8 flex justify-center">
 
-          <ToolloopLogo size="lg" align="center" title="시큐리티" />
+          <ToolloopLogo size="lg" align="center" title="ckurity" />
 
         </div>
 
