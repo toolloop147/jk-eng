@@ -79,11 +79,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <path d="M0 1h18M0 7h18M0 13h18" stroke="currentColor" strokeWidth="1.5" />
             </svg>
           </button>
-<<<<<<< HEAD
-          <span className="text-sm font-semibold text-[var(--tl-accent)]">시큐리티</span>
-=======
           <span className="text-sm font-semibold text-[var(--tl-accent)]">ckurity</span>
->>>>>>> 7ca41d6124048ed8bdfc1353ead2b252d7983bd3
         </header>
 
         <main className="tl-page-main">{children}</main>
