@@ -17,7 +17,11 @@ export function ToolloopLogo({
   variant = "light",
   align = "left",
   showSubtitle = true,
+<<<<<<< HEAD
   title = "시큐리티",
+=======
+  title = "ckurity",
+>>>>>>> 7ca41d6124048ed8bdfc1353ead2b252d7983bd3
 }: ToolloopLogoProps) {
   const s = sizes[size];
   const titleColor =
