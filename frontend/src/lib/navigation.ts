@@ -1,4 +1,4 @@
-import { SIDEBAR_GROUPS, SIDEBAR_LINKS, SIDEBAR_SECONDARY, SidebarGroupItem } from "./config";
+import { SIDEBAR_GROUPS, SIDEBAR_LINKS, SIDEBAR_PRIMARY, SIDEBAR_SECONDARY, SidebarGroupItem } from "./config";
 
 export type PageDef = {
   id: string;
@@ -28,6 +28,12 @@ function itemIsActive(item: SidebarGroupItem, activeId: string): boolean {
 }
 
 export function getAllPages(): PageDef[] {
+  const fromPrimary = SIDEBAR_PRIMARY.map((item) => ({
+    id: item.id,
+    label: item.label,
+    href: item.href,
+  }));
+
   const fromLinks = SIDEBAR_LINKS.map((item) => ({
     id: item.id,
     label: item.label,
@@ -67,7 +73,7 @@ export function getAllPages(): PageDef[] {
     }),
   );
 
-  return [...fromLinks, ...fromSecondary, ...fromGroups];
+  return [...fromPrimary, ...fromLinks, ...fromSecondary, ...fromGroups];
 }
 
 export function getPageById(id: string): PageDef | undefined {

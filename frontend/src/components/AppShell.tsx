@@ -7,7 +7,7 @@ import { clearToken, getToken } from "@/lib/auth";
 import { AppSidebar } from "./AppSidebar";
 
 function getActiveIdFromPath(pathname: string): string {
-  if (pathname === "/" || pathname === "") return "dashboard";
+  if (pathname === "/" || pathname === "") return "construction-manage";
   return pathname.replace(/^\//, "");
 }
 

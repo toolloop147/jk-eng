@@ -7,6 +7,7 @@ import express from "express";
 import path from "path";
 import authRoutes from "./auth/routes";
 import fileRoutes from "./files/routes";
+import insProxyRoutes from "./insProxy/routes";
 import { runMigrations } from "./db/migrate";
 import { getPool } from "./db/pool";
 import { seedAdmin } from "./db/seed";
@@ -37,6 +38,7 @@ app.get("/health", async (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/files", fileRoutes);
+app.use("/api/ins", insProxyRoutes);
 
 app.listen(port, async () => {
   try {
