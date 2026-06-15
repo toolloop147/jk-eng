@@ -68,7 +68,7 @@ export function LoginPage() {
 
       setToken(token);
 
-      router.replace("/");
+      router.replace("/construction-manage");
 
     } catch (err) {
 
