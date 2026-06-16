@@ -1,4 +1,4 @@
-import { API_URL } from "./config";
+import { API_URL, INS_API_URL } from "./config";
 import { getToken } from "./auth";
 
 const INS_API_BASE = `${API_URL}/api/ins`;
@@ -21,6 +21,9 @@ export interface InstallConfirmationData {
   constructionMethod: string | null;
   ddns: string | null;
   deliveryNotes: string | null;
+  installDesiredAt1?: string | null;
+  installDesiredAt2?: string | null;
+  installDesiredAt3?: string | null;
   products: InstallConfirmationProduct[];
   diagramMarkers: InstallConfirmationDiagramMarker[];
   termsConfirmed: boolean;
@@ -29,6 +32,15 @@ export interface InstallConfirmationData {
   designerPhone: string | null;
   contractorSign: string | null;
   installerName: string | null;
+}
+
+export interface CompletionPhoto {
+  id: string;
+  fileName: string;
+  storedPath: string;
+  mimeType: string | null;
+  fileSize: number | null;
+  uploadedAt: string;
 }
 
 export interface InstallCompletionData {
@@ -41,6 +53,7 @@ export interface InstallCompletionData {
   termsConfirmed: boolean;
   contractorSign: string | null;
   inspectorSign: string | null;
+  completionPhotos?: CompletionPhoto[];
 }
 
 export interface CreatedCustomer {
@@ -133,4 +146,59 @@ export async function updateCustomerInstallCompletion(
   const data = await parseJson(res);
   if (!res.ok) throw new Error(data.error ?? "준공확인서 저장에 실패했습니다.");
   return data.customer as CreatedCustomer;
+}
+
+export async function uploadCustomerCompletionPhoto(
+  customerId: string,
+  file: File,
+) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const token = getToken();
+
+  const res = await fetch(
+    `${INS_API_URL}/api/customers/${customerId}/install-completion/photos`,
+    {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    },
+  );
+  const data = await parseJson(res);
+  if (!res.ok) throw new Error(data.error ?? "준공사진 업로드에 실패했습니다.");
+  return data.customer as CreatedCustomer;
+}
+
+export async function deleteCustomerCompletionPhoto(
+  customerId: string,
+  photoId: string,
+) {
+  const res = await fetch(
+    `${INS_API_BASE}/customers/${customerId}/install-completion/photos/${photoId}`,
+    {
+      method: "DELETE",
+      headers: authHeaders(),
+    },
+  );
+  const data = await parseJson(res);
+  if (!res.ok) throw new Error(data.error ?? "준공사진 삭제에 실패했습니다.");
+  return data.customer as CreatedCustomer;
+}
+
+export async function fetchCustomerCompletionPhoto(
+  customerId: string,
+  photoId: string,
+) {
+  const token = getToken();
+  const res = await fetch(
+    `${INS_API_URL}/api/customers/${customerId}/install-completion/photos/${photoId}/file?disposition=inline`,
+    {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    },
+  );
+  if (!res.ok) {
+    const data = await parseJson(res);
+    throw new Error(data.error ?? "준공사진을 불러올 수 없습니다.");
+  }
+  return res.blob();
 }

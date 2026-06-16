@@ -38,7 +38,119 @@ function displayAddress(customer: CreatedCustomer) {
   return parts.length ? parts.join(" ") : "-";
 }
 
+function useConstructionMobileView() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  return isMobile;
+}
+
+interface ConstructionManageMobileCardProps {
+  customer: CreatedCustomer;
+  isConstructionOpen: boolean;
+  isCompletionOpen: boolean;
+  savedMessage?: string;
+  onToggleConstruction: (customerId: string) => void;
+  onToggleCompletion: (customerId: string) => void;
+  onConstructionSaved: () => void;
+  onCompletionSaved: () => void;
+  onCustomerUpdated: (customer: CreatedCustomer) => void;
+}
+
+function ConstructionManageMobileCard({
+  customer,
+  isConstructionOpen,
+  isCompletionOpen,
+  savedMessage,
+  onToggleConstruction,
+  onToggleCompletion,
+  onConstructionSaved,
+  onCompletionSaved,
+  onCustomerUpdated,
+}: ConstructionManageMobileCardProps) {
+  return (
+    <article className={`contractor-info-mobile-card${savedMessage ? " is-saved" : ""}`}>
+      <div className="contractor-info-mobile-card-header">
+        <p className="contractor-info-mobile-card-no">
+          <span className="contractor-info-mobile-card-no-label">설치번호</span>
+          <span>{customer.installNo || "-"}</span>
+        </p>
+        {savedMessage ? (
+          <span className="contractor-info-mobile-card-saved">{savedMessage}</span>
+        ) : null}
+      </div>
+
+      <dl className="contractor-info-mobile-card-fields">
+        <div className="contractor-info-mobile-field">
+          <dt>고객번호</dt>
+          <dd>{customer.customerNo}</dd>
+        </div>
+        <div className="contractor-info-mobile-field">
+          <dt>고객명</dt>
+          <dd>{displayCustomerName(customer)}</dd>
+        </div>
+        <div className="contractor-info-mobile-field">
+          <dt>연락처</dt>
+          <dd>{formatDisplayPhone(customer.mobile || customer.phone)}</dd>
+        </div>
+        <div className="contractor-info-mobile-field">
+          <dt>주소</dt>
+          <dd>{displayAddress(customer)}</dd>
+        </div>
+      </dl>
+
+      <div className="install-manage-mobile-actions">
+        <span className="tl-badge install-manage-mobile-stage-badge">
+          {contractProgressStageLabel(customer.progressStageCode)}
+        </span>
+        <button
+          type="button"
+          className={`install-manage-pill-btn install-manage-pill-btn--start${isConstructionOpen ? " is-active" : ""}`}
+          onClick={() => onToggleConstruction(customer.id)}
+        >
+          {isConstructionOpen ? "닫기" : "시공"}
+        </button>
+        <button
+          type="button"
+          className={`install-manage-pill-btn install-manage-pill-btn--complete${isCompletionOpen ? " is-active" : ""}`}
+          onClick={() => onToggleCompletion(customer.id)}
+        >
+          {isCompletionOpen ? "닫기" : "준공"}
+        </button>
+      </div>
+
+      {isConstructionOpen && (
+        <div className="contractor-info-mobile-edit">
+          <InstallConfirmationForm
+            customer={customer}
+            onSave={onConstructionSaved}
+            onCustomerUpdated={onCustomerUpdated}
+          />
+        </div>
+      )}
+
+      {isCompletionOpen && (
+        <div className="contractor-info-mobile-edit">
+          <CompletionConfirmationForm
+            customer={customer}
+            onSave={onCompletionSaved}
+            onCustomerUpdated={onCustomerUpdated}
+          />
+        </div>
+      )}
+    </article>
+  );
+}
+
 export function ConstructionManagePage() {
+  const isMobileView = useConstructionMobileView();
   const [customers, setCustomers] = useState<CreatedCustomer[]>([]);
   const [query, setQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,6 +158,10 @@ export function ConstructionManagePage() {
   const [error, setError] = useState("");
   const [expandedConstructionId, setExpandedConstructionId] = useState<string | null>(null);
   const [expandedCompletionId, setExpandedCompletionId] = useState<string | null>(null);
+  const [mobileSavedState, setMobileSavedState] = useState<{
+    customerId: string;
+    kind: "construction" | "completion";
+  } | null>(null);
 
   const loadCustomers = useCallback(async () => {
     setLoading(true);
@@ -65,6 +181,12 @@ export function ConstructionManagePage() {
   useEffect(() => {
     loadCustomers();
   }, [loadCustomers]);
+
+  useEffect(() => {
+    if (!mobileSavedState) return;
+    const timer = window.setTimeout(() => setMobileSavedState(null), 2000);
+    return () => window.clearTimeout(timer);
+  }, [mobileSavedState]);
 
   function handleSearchSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -181,7 +303,7 @@ export function ConstructionManagePage() {
     <>
       <PageHeader groupLabel="계약 · 설치 관리" title="설치 관리" />
 
-      <div className="contractor-info-page flex min-w-0 max-w-full flex-col gap-4">
+      <div className="contractor-info-page contractor-info-page--construction-manage flex min-w-0 max-w-full flex-col gap-4">
         <div className="contractor-info-panel min-w-0">
           <form onSubmit={handleSearchSubmit} className="contractor-info-search">
             <input
@@ -216,53 +338,80 @@ export function ConstructionManagePage() {
         </div>
 
         <div className="contractor-info-panel min-w-0">
-          <div className="contractor-info-table-wrap overflow-x-auto">
-            <table className="tl-member-table contractor-info-table contractor-info-table--construction-manage text-sm">
-              <colgroup>
-                <col className="install-manage-col-install-no-col" />
-                <col className="contractor-info-col-no-col" />
-                <col className="contractor-info-col-name-col" />
-                <col className="contractor-info-col-service-col" />
-                <col className="contractor-info-col-mobile-col" />
-                <col />
-                <col className="contractor-info-col-date-col" />
-                <col className="install-manage-col-stage-col" />
-                <col className="install-manage-col-start-col" />
-                <col className="install-manage-col-complete-col" />
-              </colgroup>
-              <thead>
-                <tr className="border-b border-[#d4ebe9] text-slate-600">
-                  <th className="install-manage-col-install-no">설치번호</th>
-                  <th className="contractor-info-col-no">고객번호</th>
-                  <th className="contractor-info-col-name">고객명/상호</th>
-                  <th className="contractor-info-col-service">서비스구분</th>
-                  <th className="contractor-info-col-mobile">연락처</th>
-                  <th className="contractor-info-col-address">주소</th>
-                  <th className="contractor-info-col-date">접수일</th>
-                  <th className="contract-manage-col-stage">진행단계</th>
-                  <th className="install-manage-col-start">시공</th>
-                  <th className="install-manage-col-complete">준공</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={10} className="px-3 py-10 text-center text-slate-500">
-                      불러오는 중...
-                    </td>
+          {loading ? (
+            <p className="px-3 py-10 text-center text-sm text-slate-500">불러오는 중...</p>
+          ) : customers.length === 0 ? (
+            <p className="px-3 py-10 text-center text-sm text-slate-500">
+              조회된 시공 건이 없습니다.
+            </p>
+          ) : isMobileView ? (
+            <div className="contractor-info-mobile-list flex flex-col gap-3">
+              {customers.map((customer) => (
+                <ConstructionManageMobileCard
+                  key={customer.id}
+                  customer={customer}
+                  isConstructionOpen={expandedConstructionId === customer.id}
+                  isCompletionOpen={expandedCompletionId === customer.id}
+                  savedMessage={
+                    mobileSavedState?.customerId === customer.id
+                      ? mobileSavedState.kind === "construction"
+                        ? "시공 저장 완료"
+                        : "준공 저장 완료"
+                      : undefined
+                  }
+                  onToggleConstruction={toggleConstructionForm}
+                  onToggleCompletion={toggleCompletionForm}
+                  onConstructionSaved={() => {
+                    setExpandedConstructionId(null);
+                    setMobileSavedState({ customerId: customer.id, kind: "construction" });
+                  }}
+                  onCompletionSaved={() => {
+                    setExpandedCompletionId(null);
+                    setMobileSavedState({ customerId: customer.id, kind: "completion" });
+                  }}
+                  onCustomerUpdated={(updated) =>
+                    setCustomers((current) =>
+                      current.map((item) => (item.id === updated.id ? updated : item)),
+                    )
+                  }
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="contractor-info-table-wrap overflow-x-auto">
+              <table className="tl-member-table contractor-info-table contractor-info-table--construction-manage text-sm">
+                <colgroup>
+                  <col className="install-manage-col-install-no-col" />
+                  <col className="contractor-info-col-no-col" />
+                  <col className="contractor-info-col-name-col" />
+                  <col className="contractor-info-col-service-col" />
+                  <col className="contractor-info-col-mobile-col" />
+                  <col />
+                  <col className="contractor-info-col-date-col" />
+                  <col className="install-manage-col-stage-col" />
+                  <col className="install-manage-col-start-col" />
+                  <col className="install-manage-col-complete-col" />
+                </colgroup>
+                <thead>
+                  <tr className="border-b border-[#d4ebe9] text-slate-600">
+                    <th className="install-manage-col-install-no">설치번호</th>
+                    <th className="contractor-info-col-no">고객번호</th>
+                    <th className="contractor-info-col-name">고객명/상호</th>
+                    <th className="contractor-info-col-service">서비스구분</th>
+                    <th className="contractor-info-col-mobile">연락처</th>
+                    <th className="contractor-info-col-address">주소</th>
+                    <th className="contractor-info-col-date">접수일</th>
+                    <th className="contract-manage-col-stage">진행단계</th>
+                    <th className="install-manage-col-start">시공</th>
+                    <th className="install-manage-col-complete">준공</th>
                   </tr>
-                ) : customers.length === 0 ? (
-                  <tr>
-                    <td colSpan={10} className="px-3 py-10 text-center text-slate-500">
-                      조회된 시공 건이 없습니다.
-                    </td>
-                  </tr>
-                ) : (
-                  customers.map((customer) => renderConstructionFormRow(customer, customer.id))
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {customers.map((customer) => renderConstructionFormRow(customer, customer.id))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <div className="mt-4 text-sm text-slate-600">
             총 {customers.length.toLocaleString("ko-KR")}건

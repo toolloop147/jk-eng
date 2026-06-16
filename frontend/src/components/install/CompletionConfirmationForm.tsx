@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import html2canvas from "html2canvas";
 import type {
+  CompletionPhoto,
   CreatedCustomer,
   InstallCompletionData,
 } from "@/lib/insApi";
-import { updateCustomerInstallCompletion } from "@/lib/insApi";
+import {
+  deleteCustomerCompletionPhoto,
+  fetchCustomerCompletionPhoto,
+  updateCustomerInstallCompletion,
+  uploadCustomerCompletionPhoto,
+} from "@/lib/insApi";
 import { formatPhoneInput } from "@/lib/formatPhone";
 
 const COMPLETION_ITEMS = [
@@ -41,6 +47,68 @@ function formatInstallAddress(customer: CreatedCustomer) {
   const zip = customer.zipCode ? `(${customer.zipCode}) ` : "";
   const parts = [customer.address, customer.addressDetail].filter(Boolean);
   return zip + parts.join(" ");
+}
+
+function formatUploadedAt(value: string) {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function CompletionPhotoPreview({
+  customerId,
+  photo,
+}: {
+  customerId: string;
+  photo: CompletionPhoto;
+}) {
+  const [src, setSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    let objectUrl: string | null = null;
+
+    fetchCustomerCompletionPhoto(customerId, photo.id)
+      .then((blob) => {
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(blob);
+        setSrc(objectUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setSrc(null);
+      });
+
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [customerId, photo.id]);
+
+  if (!src) {
+    return <span className="install-confirmation-photo-thumb-placeholder">—</span>;
+  }
+
+  return (
+    <a
+      className="install-confirmation-photo-thumb-link"
+      href={src}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <img
+        src={src}
+        alt={photo.fileName}
+        className="install-confirmation-photo-thumb"
+      />
+    </a>
+  );
 }
 
 function buildProductRows(customer: CreatedCustomer): ProductRow[] {
@@ -239,8 +307,9 @@ function syncClonedFormState(source: HTMLElement, clone: HTMLElement) {
 
 const DOWNLOAD_CARD_ORDER = [
   ".install-confirmation-card--info",
-  ".install-confirmation-card--delivery",
   ".install-confirmation-card--product",
+  ".install-confirmation-card--delivery",
+  ".install-confirmation-card--photos",
   ".install-confirmation-card--construction",
   ".install-confirmation-card--terms",
 ] as const;
@@ -281,6 +350,7 @@ export function CompletionConfirmationForm({
   onCustomerUpdated,
 }: CompletionConfirmationFormProps) {
   const formRef = useRef<HTMLDivElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const productRows = useMemo(() => buildProductRows(customer), [customer]);
   const initialFormState = useMemo(
     () => buildFormStateFromCustomer(customer, productRows),
@@ -314,8 +384,12 @@ export function CompletionConfirmationForm({
   const [inspectorSign, setInspectorSign] = useState(
     initialFormState.inspectorSign,
   );
+  const [completionPhotos, setCompletionPhotos] = useState<CompletionPhoto[]>(
+    customer.installCompletion?.completionPhotos ?? [],
+  );
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
 
   useEffect(() => {
     const nextState = buildFormStateFromCustomer(customer, productRows);
@@ -329,6 +403,7 @@ export function CompletionConfirmationForm({
     setTermsConfirmed(nextState.termsConfirmed);
     setContractorSign(nextState.contractorSign);
     setInspectorSign(nextState.inspectorSign);
+    setCompletionPhotos(customer.installCompletion?.completionPhotos ?? []);
   }, [customer, productRows]);
 
   const displayProductSummary = useMemo(
@@ -358,6 +433,7 @@ export function CompletionConfirmationForm({
       termsConfirmed,
       contractorSign: contractorSign || null,
       inspectorSign: inspectorSign || null,
+      completionPhotos,
     };
   }
 
@@ -389,6 +465,42 @@ export function CompletionConfirmationForm({
   const todayYear = today.getFullYear();
   const todayMonth = today.getMonth() + 1;
   const todayDay = today.getDate();
+
+  async function handlePhotoUpload(event: ChangeEvent<HTMLInputElement>) {
+    const files = event.target.files;
+    if (!files?.length || isUploadingPhotos) return;
+
+    setIsUploadingPhotos(true);
+    try {
+      let latestCustomer = customer;
+      for (const file of Array.from(files)) {
+        latestCustomer = await uploadCustomerCompletionPhoto(customer.id, file);
+      }
+      onCustomerUpdated?.(latestCustomer);
+    } catch (error) {
+      console.error("Failed to upload completion photos", error);
+      window.alert("준공사진 업로드에 실패했습니다.");
+    } finally {
+      setIsUploadingPhotos(false);
+      event.target.value = "";
+    }
+  }
+
+  async function handleDeletePhoto(photoId: string) {
+    if (isUploadingPhotos || isSaving) return;
+    if (!window.confirm("선택한 준공사진을 삭제하시겠습니까?")) return;
+
+    setIsUploadingPhotos(true);
+    try {
+      const updated = await deleteCustomerCompletionPhoto(customer.id, photoId);
+      onCustomerUpdated?.(updated);
+    } catch (error) {
+      console.error("Failed to delete completion photo", error);
+      window.alert("준공사진 삭제에 실패했습니다.");
+    } finally {
+      setIsUploadingPhotos(false);
+    }
+  }
 
   async function handlePrint() {
     if (!formRef.current || isSaving) return;
@@ -515,6 +627,44 @@ export function CompletionConfirmationForm({
         <div className="install-confirmation-layout">
           <div className="install-confirmation-column install-confirmation-column--left">
             <section className="install-confirmation-card install-confirmation-card--info">
+              <dl className="install-confirmation-info-mobile-fields">
+                <div className="contractor-info-mobile-field">
+                  <dt>계약자명</dt>
+                  <dd>{displayContractorName(customer)}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>설치번호</dt>
+                  <dd>{customer.installNo || "-"}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>휴대전화</dt>
+                  <dd>{formatDisplayPhone(customer.mobile) || "-"}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>서비스구분</dt>
+                  <dd>{customer.serviceType || "-"}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>일반전화</dt>
+                  <dd>{formatDisplayPhone(customer.phone) || "-"}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>준공일</dt>
+                  <dd>
+                    <input
+                      type="date"
+                      className="install-confirmation-input install-confirmation-input--date"
+                      value={completionDate}
+                      onChange={(event) => setCompletionDate(event.target.value)}
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>설치주소</dt>
+                  <dd>{formatInstallAddress(customer)}</dd>
+                </div>
+              </dl>
+
               <table className="install-confirmation-table install-confirmation-info-table">
                 <tbody>
                   <tr>
@@ -550,15 +700,55 @@ export function CompletionConfirmationForm({
               </table>
             </section>
 
-            <section className="install-confirmation-card install-confirmation-card--delivery">
-              <h4 className="install-confirmation-section-title">◆준공내용</h4>
-              <textarea
-                className="install-confirmation-textarea"
-                rows={4}
-                value={completionNotes}
-                onChange={(event) => setCompletionNotes(event.target.value)}
-                placeholder="준공 내용 및 특이사항을 입력하세요"
-              />
+            <section className="install-confirmation-card install-confirmation-card--product">
+              <h4 className="install-confirmation-section-title">◆준공상품구성</h4>
+              <p className="install-confirmation-product-summary">
+                {displayProductSummary || "—"}
+              </p>
+              <table className="install-confirmation-table install-confirmation-product-table install-confirmation-product-table--completion">
+                <thead>
+                  <tr>
+                    <th>품목</th>
+                    <th>모델</th>
+                    <th>의뢰 수량</th>
+                    <th>준공 수량</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productRows.map((row, index) => (
+                    <tr key={`${row.item}-${index}`}>
+                      <td>{row.item}</td>
+                      <td>
+                        <input
+                          type="text"
+                          className="install-confirmation-input"
+                          value={models[index] ?? ""}
+                          onChange={(event) => {
+                            const next = [...models];
+                            next[index] = event.target.value;
+                            setModels(next);
+                          }}
+                        />
+                      </td>
+                      <td className="install-confirmation-qty-cell">
+                        {row.requested}
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          className="install-confirmation-input install-confirmation-input--qty"
+                          value={installedQtys[index] ?? ""}
+                          onChange={(event) => {
+                            const next = [...installedQtys];
+                            next[index] = event.target.value;
+                            setInstalledQtys(next);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </section>
 
             <section className="install-confirmation-card install-confirmation-card--terms">
@@ -588,6 +778,45 @@ export function CompletionConfirmationForm({
                   본인은 위 내용을 확인하고 준공하였음을 확인합니다.
                 </p>
               </div>
+
+              <dl className="install-confirmation-sign-mobile-fields">
+                <div className="contractor-info-mobile-field">
+                  <dt>영업/총판점</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={salesDealerName}
+                      onChange={(event) => setSalesDealerName(event.target.value)}
+                      placeholder="영업/총판점 입력"
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>계약자</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={contractorSign}
+                      onChange={(event) => setContractorSign(event.target.value)}
+                      placeholder="서명 / 인"
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>확인자</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={inspectorSign}
+                      onChange={(event) => setInspectorSign(event.target.value)}
+                      placeholder="서명 / 인"
+                    />
+                  </dd>
+                </div>
+              </dl>
 
               <table className="install-confirmation-table install-confirmation-sign-table">
                 <colgroup>
@@ -650,59 +879,122 @@ export function CompletionConfirmationForm({
           </div>
 
           <div className="install-confirmation-column install-confirmation-column--right">
-            <section className="install-confirmation-card install-confirmation-card--product">
-              <h4 className="install-confirmation-section-title">◆준공상품구성</h4>
-              <p className="install-confirmation-product-summary">
-                {displayProductSummary || "—"}
-              </p>
-              <table className="install-confirmation-table install-confirmation-product-table">
+            <section className="install-confirmation-card install-confirmation-card--delivery">
+              <h4 className="install-confirmation-section-title">◆준공내용</h4>
+              <textarea
+                className="install-confirmation-textarea"
+                rows={4}
+                value={completionNotes}
+                onChange={(event) => setCompletionNotes(event.target.value)}
+                placeholder="준공 내용 및 특이사항을 입력하세요"
+              />
+            </section>
+
+            <section className="install-confirmation-card install-confirmation-card--photos">
+              <div className="install-confirmation-photo-header">
+                <h4 className="install-confirmation-section-title">◆준공사진</h4>
+                <div className="install-confirmation-photo-upload install-confirmation-no-print">
+                  <input
+                    ref={photoInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="install-confirmation-photo-input"
+                    onChange={handlePhotoUpload}
+                    disabled={isUploadingPhotos || isSaving}
+                  />
+                  <button
+                    type="button"
+                    className="contractor-info-action-btn"
+                    onClick={() => photoInputRef.current?.click()}
+                    disabled={isUploadingPhotos || isSaving}
+                  >
+                    {isUploadingPhotos ? "업로드 중..." : "사진 업로드"}
+                  </button>
+                </div>
+              </div>
+              <table className="install-confirmation-table install-confirmation-photo-table">
                 <thead>
                   <tr>
-                    <th>품목</th>
-                    <th>모델</th>
-                    <th>의뢰 수량</th>
-                    <th>준공 수량</th>
+                    <th>No</th>
+                    <th>미리보기</th>
+                    <th>파일명</th>
+                    <th>업로드일</th>
+                    <th className="install-confirmation-no-print">관리</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {productRows.map((row, index) => (
-                    <tr key={`${row.item}-${index}`}>
-                      <td>{row.item}</td>
-                      <td>
-                        <input
-                          type="text"
-                          className="install-confirmation-input"
-                          value={models[index] ?? ""}
-                          onChange={(event) => {
-                            const next = [...models];
-                            next[index] = event.target.value;
-                            setModels(next);
-                          }}
-                        />
-                      </td>
-                      <td className="install-confirmation-qty-cell">
-                        {row.requested}
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          className="install-confirmation-input install-confirmation-input--qty"
-                          value={installedQtys[index] ?? ""}
-                          onChange={(event) => {
-                            const next = [...installedQtys];
-                            next[index] = event.target.value;
-                            setInstalledQtys(next);
-                          }}
-                        />
+                  {completionPhotos.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="install-confirmation-photo-empty">
+                        등록된 준공사진이 없습니다.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    completionPhotos.map((photo, index) => (
+                      <tr key={photo.id}>
+                        <td className="install-confirmation-photo-no">{index + 1}</td>
+                        <td>
+                          <CompletionPhotoPreview
+                            customerId={customer.id}
+                            photo={photo}
+                          />
+                        </td>
+                        <td className="install-confirmation-photo-name">
+                          {photo.fileName}
+                        </td>
+                        <td className="install-confirmation-photo-date">
+                          {formatUploadedAt(photo.uploadedAt)}
+                        </td>
+                        <td className="install-confirmation-no-print">
+                          <button
+                            type="button"
+                            className="contractor-info-action-btn install-confirmation-photo-delete-btn"
+                            onClick={() => handleDeletePhoto(photo.id)}
+                            disabled={isUploadingPhotos || isSaving}
+                          >
+                            삭제
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </section>
 
             <section className="install-confirmation-card install-confirmation-card--construction">
               <h4 className="install-confirmation-section-title">◆시공정보</h4>
+              <dl className="install-confirmation-info-mobile-fields">
+                <div className="contractor-info-mobile-field">
+                  <dt>시공업체</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--full"
+                      value={constructionCompany}
+                      onChange={(event) =>
+                        setConstructionCompany(event.target.value)
+                      }
+                      placeholder="시공업체명 입력"
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>시공자</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--full"
+                      value={constructionWorker}
+                      onChange={(event) =>
+                        setConstructionWorker(event.target.value)
+                      }
+                      placeholder="시공자명 입력"
+                    />
+                  </dd>
+                </div>
+              </dl>
               <table className="install-confirmation-table install-confirmation-info-table">
                 <tbody>
                   <tr>
