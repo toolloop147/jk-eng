@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import html2canvas from "html2canvas";
 import type {
   CreatedCustomer,
@@ -47,6 +48,328 @@ function formatInstallAddress(customer: CreatedCustomer) {
   const zip = customer.zipCode ? `(${customer.zipCode}) ` : "";
   const parts = [customer.address, customer.addressDetail].filter(Boolean);
   return zip + parts.join(" ");
+}
+
+function toDatetimeLocalValue(value: string | null | undefined): string {
+  if (!value?.trim()) return "";
+  const trimmed = value.trim();
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(trimmed)) {
+    return trimmed.slice(0, 16);
+  }
+  const date = new Date(trimmed);
+  if (Number.isNaN(date.getTime())) return trimmed;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function splitDatetimeLocal(value: string): { date: string; time: string } {
+  if (!value?.trim()) return { date: "", time: "" };
+  const [date, timePart] = value.split("T");
+  return { date: date || "", time: timePart?.slice(0, 5) || "" };
+}
+
+function joinDatetimeLocal(date: string, time: string): string {
+  if (!date) return "";
+  return `${date}T${time || "00:00"}`;
+}
+
+function pad2(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month, 0).getDate();
+}
+
+function parseDateParts(date: string) {
+  const now = new Date();
+  if (!date) {
+    return {
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      day: now.getDate(),
+    };
+  }
+
+  const [year, month, day] = date.split("-").map(Number);
+  return { year, month, day };
+}
+
+function parseTimeParts(time: string) {
+  const now = new Date();
+  if (!time) {
+    return { hour: now.getHours(), minute: now.getMinutes() };
+  }
+
+  const [hour, minute] = time.split(":").map(Number);
+  return { hour, minute };
+}
+
+function buildDateString(year: number, month: number, day: number) {
+  return `${year}-${pad2(month)}-${pad2(day)}`;
+}
+
+function buildTimeString(hour: number, minute: number) {
+  return `${pad2(hour)}:${pad2(minute)}`;
+}
+
+function InstallDesiredAtInput({
+  value,
+  onChange,
+  label,
+  variant = "datetime",
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  label: string;
+  variant?: "datetime" | "split";
+}) {
+  const [picker, setPicker] = useState<"date" | "time" | null>(null);
+  const { date, time } = splitDatetimeLocal(value);
+  const initialDateParts = parseDateParts(date);
+  const initialTimeParts = parseTimeParts(time);
+  const [draftYear, setDraftYear] = useState(initialDateParts.year);
+  const [draftMonth, setDraftMonth] = useState(initialDateParts.month);
+  const [draftDay, setDraftDay] = useState(initialDateParts.day);
+  const [draftHour, setDraftHour] = useState(initialTimeParts.hour);
+  const [draftMinute, setDraftMinute] = useState(initialTimeParts.minute);
+  const yearOptions = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({ length: 4 }, (_, index) => currentYear - 1 + index);
+  }, []);
+  const dayOptions = useMemo(
+    () =>
+      Array.from(
+        { length: getDaysInMonth(draftYear, draftMonth) },
+        (_, index) => index + 1,
+      ),
+    [draftYear, draftMonth],
+  );
+
+  useEffect(() => {
+    if (!picker) return;
+
+    if (picker === "date") {
+      const nextDateParts = parseDateParts(date);
+      setDraftYear(nextDateParts.year);
+      setDraftMonth(nextDateParts.month);
+      setDraftDay(nextDateParts.day);
+      return;
+    }
+
+    const nextTimeParts = parseTimeParts(time);
+    setDraftHour(nextTimeParts.hour);
+    setDraftMinute(nextTimeParts.minute);
+  }, [picker, date, time]);
+
+  useEffect(() => {
+    const maxDay = getDaysInMonth(draftYear, draftMonth);
+    if (draftDay > maxDay) {
+      setDraftDay(maxDay);
+    }
+  }, [draftYear, draftMonth, draftDay]);
+
+  useEffect(() => {
+    if (!picker) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [picker]);
+
+  function closePicker() {
+    setPicker(null);
+  }
+
+  function confirmPicker() {
+    if (picker === "date") {
+      onChange(
+        joinDatetimeLocal(
+          buildDateString(draftYear, draftMonth, draftDay),
+          time,
+        ),
+      );
+    } else if (picker === "time") {
+      onChange(
+        joinDatetimeLocal(date, buildTimeString(draftHour, draftMinute)),
+      );
+    }
+    closePicker();
+  }
+
+  if (variant === "split") {
+    return (
+      <>
+        <div className="install-confirmation-datetime-split">
+          <button
+            type="button"
+            className={`install-confirmation-datetime-trigger install-confirmation-datetime-trigger--date${date ? "" : " is-empty"}`}
+            onClick={() => setPicker("date")}
+            aria-label={`${label} 날짜`}
+          >
+            {date || "\u00a0"}
+          </button>
+          <button
+            type="button"
+            className={`install-confirmation-datetime-trigger install-confirmation-datetime-trigger--time${time ? "" : " is-empty"}`}
+            onClick={() => setPicker("time")}
+            aria-label={`${label} 시간`}
+          >
+            {time || "\u00a0"}
+          </button>
+        </div>
+
+        {picker &&
+          createPortal(
+            <div
+              className="install-desired-at-modal-overlay"
+              role="presentation"
+              onClick={closePicker}
+            >
+              <div
+                className="install-desired-at-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label={
+                  picker === "date"
+                    ? `${label} 날짜 선택`
+                    : `${label} 시간 선택`
+                }
+                onClick={(event) => event.stopPropagation()}
+              >
+                <p className="install-desired-at-modal-title">
+                  {picker === "date" ? "날짜 선택" : "시간 선택"}
+                </p>
+
+                {picker === "date" ? (
+                  <div className="install-desired-at-modal-fields">
+                    <label className="install-desired-at-modal-field">
+                      <span>년</span>
+                      <select
+                        className="install-desired-at-modal-select"
+                        value={draftYear}
+                        onChange={(event) =>
+                          setDraftYear(Number(event.target.value))
+                        }
+                      >
+                        {yearOptions.map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="install-desired-at-modal-field">
+                      <span>월</span>
+                      <select
+                        className="install-desired-at-modal-select"
+                        value={draftMonth}
+                        onChange={(event) =>
+                          setDraftMonth(Number(event.target.value))
+                        }
+                      >
+                        {Array.from({ length: 12 }, (_, index) => index + 1).map(
+                          (month) => (
+                            <option key={month} value={month}>
+                              {month}
+                            </option>
+                          ),
+                        )}
+                      </select>
+                    </label>
+                    <label className="install-desired-at-modal-field">
+                      <span>일</span>
+                      <select
+                        className="install-desired-at-modal-select"
+                        value={draftDay}
+                        onChange={(event) =>
+                          setDraftDay(Number(event.target.value))
+                        }
+                      >
+                        {dayOptions.map((day) => (
+                          <option key={day} value={day}>
+                            {day}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                ) : (
+                  <div className="install-desired-at-modal-fields install-desired-at-modal-fields--time">
+                    <label className="install-desired-at-modal-field">
+                      <span>시</span>
+                      <select
+                        className="install-desired-at-modal-select"
+                        value={draftHour}
+                        onChange={(event) =>
+                          setDraftHour(Number(event.target.value))
+                        }
+                      >
+                        {Array.from({ length: 24 }, (_, index) => index).map(
+                          (hour) => (
+                            <option key={hour} value={hour}>
+                              {pad2(hour)}
+                            </option>
+                          ),
+                        )}
+                      </select>
+                    </label>
+                    <label className="install-desired-at-modal-field">
+                      <span>분</span>
+                      <select
+                        className="install-desired-at-modal-select"
+                        value={draftMinute}
+                        onChange={(event) =>
+                          setDraftMinute(Number(event.target.value))
+                        }
+                      >
+                        {Array.from({ length: 60 }, (_, index) => index).map(
+                          (minute) => (
+                            <option key={minute} value={minute}>
+                              {pad2(minute)}
+                            </option>
+                          ),
+                        )}
+                      </select>
+                    </label>
+                  </div>
+                )}
+
+                <div className="install-desired-at-modal-actions">
+                  <button
+                    type="button"
+                    className="install-desired-at-modal-btn"
+                    onClick={closePicker}
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="button"
+                    className="install-desired-at-modal-btn install-desired-at-modal-btn--primary"
+                    onClick={confirmPicker}
+                  >
+                    확인
+                  </button>
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )}
+      </>
+    );
+  }
+
+  return (
+    <input
+      type="datetime-local"
+      className="install-confirmation-input install-confirmation-input--datetime"
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      aria-label={label}
+    />
+  );
 }
 
 function buildProductRows(customer: CreatedCustomer): ProductRow[] {
@@ -153,6 +476,9 @@ interface InstallFormState {
   constructionMethod: string;
   deliveryNotes: string;
   ddns: string;
+  installDesiredAt1: string;
+  installDesiredAt2: string;
+  installDesiredAt3: string;
   models: string[];
   installedQtys: string[];
   termsConfirmed: boolean;
@@ -203,6 +529,9 @@ function buildFormStateFromCustomer(
       constructionMethod: "",
       deliveryNotes: customer.memo ?? "",
       ddns: "",
+      installDesiredAt1: "",
+      installDesiredAt2: "",
+      installDesiredAt3: "",
       models: productRows.map(() => ""),
       installedQtys: productRows.map(() => ""),
       termsConfirmed: false,
@@ -219,6 +548,9 @@ function buildFormStateFromCustomer(
     constructionMethod: saved.constructionMethod ?? "",
     deliveryNotes: saved.deliveryNotes ?? customer.memo ?? "",
     ddns: saved.ddns ?? "",
+    installDesiredAt1: toDatetimeLocalValue(saved.installDesiredAt1),
+    installDesiredAt2: toDatetimeLocalValue(saved.installDesiredAt2),
+    installDesiredAt3: toDatetimeLocalValue(saved.installDesiredAt3),
     models: mergeProductField(productRows, saved.products, "model"),
     installedQtys: mergeProductField(productRows, saved.products, "installed"),
     termsConfirmed: saved.termsConfirmed ?? false,
@@ -368,6 +700,15 @@ export function InstallConfirmationForm({
     initialFormState.deliveryNotes,
   );
   const [ddns, setDdns] = useState(initialFormState.ddns);
+  const [installDesiredAt1, setInstallDesiredAt1] = useState(
+    initialFormState.installDesiredAt1,
+  );
+  const [installDesiredAt2, setInstallDesiredAt2] = useState(
+    initialFormState.installDesiredAt2,
+  );
+  const [installDesiredAt3, setInstallDesiredAt3] = useState(
+    initialFormState.installDesiredAt3,
+  );
   const [installedQtys, setInstalledQtys] = useState(
     initialFormState.installedQtys,
   );
@@ -393,12 +734,19 @@ export function InstallConfirmationForm({
   );
   const [isDiagramDragOver, setIsDiagramDragOver] = useState(false);
   const [draggingMarkerId, setDraggingMarkerId] = useState<string | null>(null);
+  const [selectedDiagramTool, setSelectedDiagramTool] =
+    useState<DiagramMarkerType | null>(null);
+  const diagramToolDraggedRef = useRef(false);
+  const suppressCanvasPlaceRef = useRef(false);
 
   useEffect(() => {
     const nextState = buildFormStateFromCustomer(customer, productRows);
     setConstructionMethod(nextState.constructionMethod);
     setDeliveryNotes(nextState.deliveryNotes);
     setDdns(nextState.ddns);
+    setInstallDesiredAt1(nextState.installDesiredAt1);
+    setInstallDesiredAt2(nextState.installDesiredAt2);
+    setInstallDesiredAt3(nextState.installDesiredAt3);
     setInstalledQtys(nextState.installedQtys);
     setModels(nextState.models);
     setTermsConfirmed(nextState.termsConfirmed);
@@ -415,6 +763,9 @@ export function InstallConfirmationForm({
       constructionMethod: constructionMethod || null,
       ddns: ddns || null,
       deliveryNotes: deliveryNotes || null,
+      installDesiredAt1: installDesiredAt1 || null,
+      installDesiredAt2: installDesiredAt2 || null,
+      installDesiredAt3: installDesiredAt3 || null,
       products: productRows.map((row, index) => ({
         item: row.item,
         model: models[index] ?? "",
@@ -474,11 +825,31 @@ export function InstallConfirmationForm({
   }
 
   function handleDiagramToolDragStart(
-    event: React.DragEvent<HTMLDivElement>,
+    event: React.DragEvent<HTMLButtonElement>,
     type: DiagramMarkerType,
   ) {
+    diagramToolDraggedRef.current = true;
     event.dataTransfer.setData(DIAGRAM_MARKER_DRAG_TYPE, type);
     event.dataTransfer.effectAllowed = "copy";
+  }
+
+  function handleDiagramToolClick(type: DiagramMarkerType) {
+    if (diagramToolDraggedRef.current) {
+      diagramToolDraggedRef.current = false;
+      return;
+    }
+    setSelectedDiagramTool((current) => (current === type ? null : type));
+  }
+
+  function handleDiagramCanvasPlace(
+    event: React.PointerEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>,
+  ) {
+    if (suppressCanvasPlaceRef.current) return;
+    if (!selectedDiagramTool) return;
+    if (draggingMarkerIdRef.current) return;
+    const target = event.target as HTMLElement;
+    if (target.closest(".install-confirmation-diagram-marker")) return;
+    addDiagramMarker(selectedDiagramTool, event.clientX, event.clientY);
   }
 
   function handleDiagramCanvasDragOver(event: React.DragEvent<HTMLDivElement>) {
@@ -515,6 +886,7 @@ export function InstallConfirmationForm({
   ) {
     event.preventDefault();
     event.stopPropagation();
+    suppressCanvasPlaceRef.current = true;
     event.currentTarget.setPointerCapture(event.pointerId);
     draggingMarkerIdRef.current = markerId;
     setDraggingMarkerId(markerId);
@@ -536,6 +908,9 @@ export function InstallConfirmationForm({
     }
     draggingMarkerIdRef.current = null;
     setDraggingMarkerId(null);
+    window.setTimeout(() => {
+      suppressCanvasPlaceRef.current = false;
+    }, 0);
   }
 
   function removeDiagramMarker(markerId: string) {
@@ -548,6 +923,25 @@ export function InstallConfirmationForm({
   const todayYear = today.getFullYear();
   const todayMonth = today.getMonth() + 1;
   const todayDay = today.getDate();
+
+  function renderConstructionMethodOptions() {
+    return (
+      <div className="install-confirmation-method-options">
+        {CONSTRUCTION_METHODS.map((method) => (
+          <label key={method} className="install-confirmation-method-option">
+            <input
+              type="radio"
+              name={`construction-method-${customer.id}`}
+              value={method}
+              checked={constructionMethod === method}
+              onChange={() => setConstructionMethod(method)}
+            />
+            <span>{method}</span>
+          </label>
+        ))}
+      </div>
+    );
+  }
 
   async function handlePrint() {
     if (!formRef.current || isSaving) return;
@@ -674,30 +1068,112 @@ export function InstallConfirmationForm({
         <div className="install-confirmation-layout">
           <div className="install-confirmation-column install-confirmation-column--left">
             <section className="install-confirmation-card install-confirmation-card--info">
+              <dl className="install-confirmation-info-mobile-fields">
+                <div className="contractor-info-mobile-field">
+                  <dt>계약자명</dt>
+                  <dd>{displayContractorName(customer)}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>휴대전화</dt>
+                  <dd>{formatDisplayPhone(customer.mobile) || "-"}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>일반전화</dt>
+                  <dd>{formatDisplayPhone(customer.phone) || "-"}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>설치주소</dt>
+                  <dd>{formatInstallAddress(customer)}</dd>
+                </div>
+                <div className="install-confirmation-info-mobile-group">
+                  <p className="install-confirmation-info-mobile-group-title">설치 희망일</p>
+                  <div className="contractor-info-mobile-field">
+                    <dt>희망일1</dt>
+                    <dd>
+                      <InstallDesiredAtInput
+                        label="설치희망일1"
+                        value={installDesiredAt1}
+                        onChange={setInstallDesiredAt1}
+                        variant="split"
+                      />
+                    </dd>
+                  </div>
+                  <div className="contractor-info-mobile-field">
+                    <dt>희망일2</dt>
+                    <dd>
+                      <InstallDesiredAtInput
+                        label="설치희망일2"
+                        value={installDesiredAt2}
+                        onChange={setInstallDesiredAt2}
+                        variant="split"
+                      />
+                    </dd>
+                  </div>
+                  <div className="contractor-info-mobile-field">
+                    <dt>희망일3</dt>
+                    <dd>
+                      <InstallDesiredAtInput
+                        label="설치희망일3"
+                        value={installDesiredAt3}
+                        onChange={setInstallDesiredAt3}
+                        variant="split"
+                      />
+                    </dd>
+                  </div>
+                </div>
+                <div className="contractor-info-mobile-field contractor-info-mobile-field--stacked">
+                  <dt>시공방식</dt>
+                  <dd>{renderConstructionMethodOptions()}</dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>DDNS</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--full"
+                      value={ddns}
+                      onChange={(event) => setDdns(event.target.value)}
+                    />
+                  </dd>
+                </div>
+              </dl>
+
               <table className="install-confirmation-table install-confirmation-info-table">
                 <tbody>
                   <tr>
                     <th scope="row">계약자명</th>
                     <td colSpan={2}>{displayContractorName(customer)}</td>
                     <th scope="row">설치희망일1</th>
-                    <td className="install-confirmation-date-cell">
-                      (일자/시간)
+                    <td>
+                      <InstallDesiredAtInput
+                        label="설치희망일1"
+                        value={installDesiredAt1}
+                        onChange={setInstallDesiredAt1}
+                      />
                     </td>
                   </tr>
                   <tr>
                     <th scope="row">휴대전화</th>
                     <td colSpan={2}>{formatDisplayPhone(customer.mobile)}</td>
                     <th scope="row">설치희망일2</th>
-                    <td className="install-confirmation-date-cell">
-                      (일자/시간)
+                    <td>
+                      <InstallDesiredAtInput
+                        label="설치희망일2"
+                        value={installDesiredAt2}
+                        onChange={setInstallDesiredAt2}
+                      />
                     </td>
                   </tr>
                   <tr>
                     <th scope="row">일반전화</th>
                     <td colSpan={2}>{formatDisplayPhone(customer.phone)}</td>
                     <th scope="row">설치희망일3</th>
-                    <td className="install-confirmation-date-cell">
-                      (일자/시간)
+                    <td>
+                      <InstallDesiredAtInput
+                        label="설치희망일3"
+                        value={installDesiredAt3}
+                        onChange={setInstallDesiredAt3}
+                      />
                     </td>
                   </tr>
                   <tr>
@@ -706,25 +1182,7 @@ export function InstallConfirmationForm({
                   </tr>
                   <tr>
                     <th scope="row">시공방식</th>
-                    <td colSpan={4}>
-                      <div className="install-confirmation-method-options">
-                        {CONSTRUCTION_METHODS.map((method) => (
-                          <label
-                            key={method}
-                            className="install-confirmation-method-option"
-                          >
-                            <input
-                              type="radio"
-                              name={`construction-method-${customer.id}`}
-                              value={method}
-                              checked={constructionMethod === method}
-                              onChange={() => setConstructionMethod(method)}
-                            />
-                            <span>{method}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </td>
+                    <td colSpan={4}>{renderConstructionMethodOptions()}</td>
                   </tr>
                   <tr>
                     <th scope="row">DDNS</th>
@@ -779,6 +1237,69 @@ export function InstallConfirmationForm({
                   확인합니다.
                 </p>
               </div>
+
+              <dl className="install-confirmation-sign-mobile-fields">
+                <div className="contractor-info-mobile-field">
+                  <dt>영업/총판점</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={salesDealerName}
+                      onChange={(event) => setSalesDealerName(event.target.value)}
+                      placeholder="영업/총판점 입력"
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>설계사</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={designerName}
+                      onChange={(event) => setDesignerName(event.target.value)}
+                      placeholder="설계사명 입력"
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>설계사HP</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={designerPhone}
+                      onChange={(event) => setDesignerPhone(event.target.value)}
+                      placeholder="설계사 연락처 입력"
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>계약자</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={contractorSign}
+                      onChange={(event) => setContractorSign(event.target.value)}
+                      placeholder="서명 / 인"
+                    />
+                  </dd>
+                </div>
+                <div className="contractor-info-mobile-field">
+                  <dt>설치자</dt>
+                  <dd>
+                    <input
+                      type="text"
+                      className="install-confirmation-input install-confirmation-input--sign"
+                      value={installerName}
+                      onChange={(event) => setInstallerName(event.target.value)}
+                      placeholder="서명 / 인"
+                    />
+                  </dd>
+                </div>
+              </dl>
 
               <table className="install-confirmation-table install-confirmation-sign-table">
                 <colgroup>
@@ -919,17 +1440,18 @@ export function InstallConfirmationForm({
             <section className="install-confirmation-card install-confirmation-card--diagram">
               <h4 className="install-confirmation-section-title">◆설치도면</h4>
               <p className="install-confirmation-diagram-help install-confirmation-no-print">
-                오른쪽 도형을 도면에 끌어 놓으세요. 삭제는 도형의 × 버튼 또는
-                더블클릭입니다.
+                도형을 선택한 뒤 도면을 탭하거나, 도형을 끌어 놓으세요. 삭제는
+                도형의 × 버튼 또는 더블클릭입니다.
               </p>
               <div className="install-confirmation-diagram">
                 <div
                   ref={diagramCanvasRef}
-                  className={`install-confirmation-diagram-canvas${isDiagramDragOver ? " is-drag-over" : ""}`}
+                  className={`install-confirmation-diagram-canvas${isDiagramDragOver ? " is-drag-over" : ""}${selectedDiagramTool ? " is-tool-selected" : ""}`}
                   aria-label="설치도면"
                   onDragOver={handleDiagramCanvasDragOver}
                   onDragLeave={handleDiagramCanvasDragLeave}
                   onDrop={handleDiagramCanvasDrop}
+                  onPointerUp={handleDiagramCanvasPlace}
                 >
                   {diagramMarkers.length === 0 && (
                     <p className="install-confirmation-diagram-placeholder">
@@ -974,17 +1496,19 @@ export function InstallConfirmationForm({
                 </div>
                 <div className="install-confirmation-diagram-tools install-confirmation-no-print">
                   {DIAGRAM_TOOLS.map((tool) => (
-                    <div
+                    <button
                       key={tool.type}
-                      className="install-confirmation-diagram-tool install-confirmation-diagram-tool--draggable"
+                      type="button"
+                      className={`install-confirmation-diagram-tool install-confirmation-diagram-tool--draggable${selectedDiagramTool === tool.type ? " is-selected" : ""}`}
                       draggable
                       onDragStart={(event) =>
                         handleDiagramToolDragStart(event, tool.type)
                       }
+                      onClick={() => handleDiagramToolClick(tool.type)}
                     >
                       <DiagramMarkerIcon type={tool.type} />
                       <span>{tool.label}</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
