@@ -179,7 +179,7 @@ export function ConstructionManagePage() {
 
   return (
     <>
-      <PageHeader groupLabel="계약 · 설치 관리" title="시공 관리" />
+      <PageHeader groupLabel="계약 · 설치 관리" title="설치 관리" />
 
       <div className="contractor-info-page flex min-w-0 max-w-full flex-col gap-4">
         <div className="contractor-info-panel min-w-0">

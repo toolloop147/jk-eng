@@ -42,7 +42,7 @@ export const PROJECT_APPS: {
 export const DASHBOARD_ITEMS: { title: string; desc: string }[] = [];
 
 export const SIDEBAR_PRIMARY = [
-  { id: "construction-manage", label: "시공관리", href: "/construction-manage" },
+  { id: "construction-manage", label: "설치 관리", href: "/construction-manage" },
 ];
 
 export const SIDEBAR_LINKS: { id: string; label: string; href: string }[] = [];
