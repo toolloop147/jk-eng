@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SIDEBAR_GROUPS, SIDEBAR_LINKS, SIDEBAR_PRIMARY, SIDEBAR_SECONDARY } from "@/lib/config";
 import type { SidebarGroupItem } from "@/lib/config";
 import { itemHasActiveChild } from "@/lib/navigation";
+import { AppSwitcher } from "./AppSwitcher";
 import { ToolloopLogo } from "./ToolloopLogo";
 
 interface AppSidebarProps {
@@ -361,6 +362,9 @@ export function AppSidebar({
             onNavigate={onMobileClose}
           />
         ))}
+
+        <div className="tl-sidebar-divider" />
+        <AppSwitcher />
       </nav>
     </aside>
   );
