@@ -86,13 +86,13 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 
   const userResult = await getPool().query(
-    `SELECT id, email, name, password_hash, is_active
+    `SELECT id, email, name, password_hash, is_active, approval_status
      FROM users WHERE email = $1`,
     [normalizeEmail(email)]
   );
 
   if (userResult.rows.length === 0) {
-    res.status(401).json({ error: "아이디 또는 비밀번호가 올바르지 않습니다." });
+    res.status(401).json({ error: "연락처(또는 아이디) 또는 비밀번호가 올바르지 않습니다." });
     return;
   }
 
@@ -104,26 +104,34 @@ router.post("/login", async (req: Request, res: Response) => {
 
   const valid = await bcrypt.compare(password, user.password_hash);
   if (!valid) {
-    res.status(401).json({ error: "아이디 또는 비밀번호가 올바르지 않습니다." });
+    res.status(401).json({ error: "연락처(또는 아이디) 또는 비밀번호가 올바르지 않습니다." });
     return;
   }
 
-  let accessResult = await getPool().query(
+  const accessResult = await getPool().query(
     `SELECT role, app_code FROM user_app_access
      WHERE user_id = $1 AND app_code = $2`,
     [user.id, APP_CODE]
   );
 
   if (accessResult.rows.length === 0) {
-    accessResult = await getPool().query(
-      `INSERT INTO user_app_access (user_id, app_code, role)
-       VALUES ($1, $2, 'user')
-       RETURNING role, app_code`,
-      [user.id, APP_CODE]
-    );
+    res.status(403).json({ error: "해당 프로젝트 접속 권한이 없습니다." });
+    return;
   }
 
   const access = accessResult.rows[0];
+
+  if (access.role === "user") {
+    if (user.approval_status === "pending") {
+      res.status(403).json({ error: "관리자 승인 대기 중입니다. 승인 후 로그인할 수 있습니다." });
+      return;
+    }
+    if (user.approval_status === "rejected") {
+      res.status(403).json({ error: "가입이 거절되었습니다." });
+      return;
+    }
+  }
+
   const token = jwt.sign(
     {
       sub: user.id,

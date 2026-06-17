@@ -58,16 +58,18 @@ DB: `jk_auth` (포트 5432)
 
 ```bash
 npm install          # backend + frontend 한 번에 설치
-npm run dev          # API(4000) + 웹(3000) 동시 실행
+npm run dev          # API(4002) + 웹(3002) 동시 실행
 ```
 
 `npm run dev` 실행 시 `.env` 파일이 없으면 자동으로 example에서 복사됩니다.
 
 | 서비스      | URL                          |
 | ----------- | ---------------------------- |
-| 웹 (로그인) | http://localhost:3000/login  |
-| API         | http://localhost:4000        |
-| 헬스체크    | http://localhost:4000/health |
+| 웹 (로그인) | http://localhost:3002/login  |
+| API         | http://localhost:4002        |
+| 헬스체크    | http://localhost:4002/health |
+
+세 앱을 동시에 띄울 때 포트: **jk-ins** 3000/4000 · **jk-op** 3001/4001 · **jk-eng** 3002/4002
 
 **개발자 계정:** `admin` / `admin123`
 

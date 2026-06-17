@@ -9,23 +9,43 @@ export type SidebarGroupItem =
   | ({ id: string; label: string; href?: undefined; children: SidebarLeaf[] });
 
 export const APP_SLUG = "jk-eng";
-export const APP_TITLE = "엔지니어링";
+export const APP_TITLE = "Engineering";
 export const APP_DESCRIPTION = "엔지니어링 관리 시스템";
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4002";
+export const INS_API_URL =
+  process.env.NEXT_PUBLIC_INS_API_URL ?? "http://localhost:4000";
 
-export const DASHBOARD_ITEMS = [
-  { title: "프로젝트", desc: "프로젝트 모듈입니다." },
-  { title: "기술 문서", desc: "기술 문서 모듈입니다." },
-  { title: "이슈 트래킹", desc: "이슈 트래킹 모듈입니다." },
+export type ProjectCode = "op" | "ins" | "eng";
+
+export const PROJECT_APPS: {
+  code: ProjectCode;
+  label: string;
+  url: string;
+}[] = [
+  {
+    code: "op",
+    label: "JK-OP",
+    url: process.env.NEXT_PUBLIC_JK_OP_URL ?? "http://localhost:3001",
+  },
+  {
+    code: "ins",
+    label: "JK-INS",
+    url: process.env.NEXT_PUBLIC_JK_INS_URL ?? "http://localhost:3000",
+  },
+  {
+    code: "eng",
+    label: "JK-ENG",
+    url: process.env.NEXT_PUBLIC_JK_ENG_URL ?? "http://localhost:3002",
+  },
 ];
 
-export const SIDEBAR_PRIMARY = [{ id: "dashboard", label: "대시보드", href: "/" }];
+export const DASHBOARD_ITEMS: { title: string; desc: string }[] = [];
 
-export const SIDEBAR_LINKS = [
-  { id: "projects", label: "프로젝트", href: "/projects" },
-  { id: "issues", label: "이슈 트래킹", href: "/issues" },
-  { id: "docs", label: "기술 문서", href: "/docs" },
+export const SIDEBAR_PRIMARY = [
+  { id: "construction-manage", label: "설치 관리", href: "/construction-manage" },
 ];
+
+export const SIDEBAR_LINKS: { id: string; label: string; href: string }[] = [];
 
 export const SIDEBAR_GROUPS: {
   id: string;
@@ -34,7 +54,4 @@ export const SIDEBAR_GROUPS: {
   items: SidebarGroupItem[];
 }[] = [];
 
-export const SIDEBAR_SECONDARY = [
-  { id: "reports", label: "리포트", href: "/reports" },
-  { id: "settings", label: "설정", href: "/settings" },
-];
+export const SIDEBAR_SECONDARY: { id: string; label: string; href: string }[] = [];

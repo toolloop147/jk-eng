@@ -1,0 +1,2248 @@
+.contractor-info-panel {
+  padding: 0;
+}
+
+.contractor-info-search {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.contractor-info-search-input {
+  width: 50%;
+  max-width: 50%;
+  min-width: 200px;
+  border: none;
+  border-bottom: 1px solid var(--tl-accent);
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 4px 8px 0;
+  font-size: 14px;
+  color: var(--foreground);
+  outline: none;
+  box-shadow: none;
+}
+
+.contractor-info-search-input::placeholder {
+  color: #94a3b8;
+}
+
+.contractor-info-search-input:focus {
+  border-bottom-color: var(--tl-accent-dark);
+  box-shadow: none;
+}
+
+.contractor-info-search-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--tl-accent-dark);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contractor-info-search-btn:hover {
+  color: var(--tl-accent);
+  text-decoration: underline;
+}
+
+.contractor-info-search-btn--muted {
+  color: var(--tl-muted);
+}
+
+.contractor-info-search-btn--muted:hover {
+  color: var(--tl-accent-dark);
+}
+
+.contractor-info-filter-tabs {
+  margin-top: 16px;
+  gap: 20px;
+}
+
+.contract-manage-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  min-width: 0;
+}
+
+.contract-manage-stage-tabs {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+
+.contract-manage-filter-spacer {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.contract-manage-inline-search {
+  flex: 0 1 auto;
+}
+
+.contract-manage-inline-search .contractor-info-search-input {
+  width: 220px;
+  max-width: 100%;
+  min-width: 160px;
+}
+
+.contract-manage-inline-search .contract-manage-search-reset {
+  color: #dc2626;
+}
+
+.contract-manage-inline-search .contract-manage-search-reset:hover {
+  color: #b91c1c;
+}
+
+.contract-manage-stage-tab.customer-form-type-btn {
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border-bottom-width: 2px;
+}
+
+.contract-manage-stage-tab.customer-form-type-btn.is-active {
+  padding-bottom: 6px;
+}
+
+.install-manage-col-install-no {
+  min-width: 96px;
+}
+
+.install-manage-col-construction {
+  min-width: 120px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.install-manage-col-start,
+.install-manage-col-complete {
+  width: 76px;
+  min-width: 76px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px 4px;
+  box-sizing: border-box;
+}
+
+.install-manage-col-btn-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.install-manage-construction-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.install-manage-pill-btn {
+  border: none;
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1.25;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.install-manage-pill-btn:hover {
+  opacity: 0.9;
+}
+
+.install-manage-pill-btn:active {
+  transform: scale(0.98);
+}
+
+.install-manage-pill-btn--start {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.install-manage-pill-btn--complete {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.install-manage-pill-btn.is-active {
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+
+.install-confirmation-form {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 20px 24px 24px;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.install-confirmation-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--tl-accent);
+}
+
+.install-confirmation-form-title {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--tl-accent-dark);
+}
+
+.install-confirmation-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.install-confirmation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.install-confirmation-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.install-confirmation-column--right {
+  min-height: 100%;
+}
+
+.install-confirmation-card {
+  background: var(--tl-surface);
+  border: 1px solid var(--tl-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+}
+
+.install-confirmation-card--diagram {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.install-confirmation-card--terms {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.install-confirmation-section-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-accent-dark);
+}
+
+.install-confirmation-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  color: #334155;
+}
+
+.install-confirmation-table th,
+.install-confirmation-table td {
+  border: 1px solid var(--tl-border);
+  padding: 7px 10px;
+  vertical-align: middle;
+  word-break: break-word;
+}
+
+.install-confirmation-table th {
+  width: 88px;
+  font-weight: 600;
+  text-align: center;
+  background: var(--tl-accent-light);
+  white-space: nowrap;
+  color: var(--tl-accent-dark);
+}
+
+.install-confirmation-info-table th[scope="row"] {
+  width: 96px;
+}
+
+.install-confirmation-date-cell {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.install-confirmation-method-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.install-confirmation-method-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.install-confirmation-input {
+  width: 100%;
+  border: none;
+  padding: 2px 4px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #334155;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.install-confirmation-input:focus {
+  outline: none;
+  background: #f8fafc;
+}
+
+.install-confirmation-input--full {
+  min-height: 24px;
+}
+
+.install-confirmation-input--datetime,
+.install-confirmation-input--date,
+.install-confirmation-input--time {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 12px;
+}
+
+.install-confirmation-datetime-split {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.install-confirmation-datetime-split .install-confirmation-input--date {
+  flex: 1.4 1 0;
+}
+
+.install-confirmation-datetime-split .install-confirmation-input--time {
+  flex: 1 1 0;
+  min-width: 5.5rem;
+}
+
+.install-confirmation-datetime-split .install-confirmation-input--date,
+.install-confirmation-datetime-split .install-confirmation-input--time {
+  position: relative;
+}
+
+.install-confirmation-datetime-trigger {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid var(--tl-accent);
+  border-radius: 0;
+  background: transparent;
+  padding: 6px 4px;
+  font-size: 11px;
+  font-family: inherit;
+  line-height: 1.2;
+  text-align: left;
+  color: #334155;
+  cursor: pointer;
+}
+
+.install-confirmation-datetime-trigger--date {
+  flex: 1.4 1 0;
+}
+
+.install-confirmation-datetime-trigger--time {
+  flex: 1 1 0;
+  min-width: 5.25rem;
+}
+
+.install-confirmation-datetime-trigger.is-empty {
+  color: transparent;
+}
+
+.install-desired-at-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgb(15 23 42 / 0.45);
+}
+
+.install-desired-at-modal {
+  width: min(100%, 18rem);
+  padding: 18px 16px 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 40px rgb(15 23 42 / 0.22);
+}
+
+.install-desired-at-modal-title {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tl-accent-dark);
+  text-align: center;
+}
+
+.install-desired-at-modal-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.install-desired-at-modal-fields--time {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.install-desired-at-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tl-muted);
+}
+
+.install-desired-at-modal-select {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--tl-accent);
+  border-radius: 0;
+  background: transparent;
+  padding: 8px 4px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #334155;
+}
+
+.install-desired-at-modal-select:focus {
+  outline: none;
+  border-bottom-color: var(--tl-accent-dark);
+}
+
+.install-desired-at-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.install-desired-at-modal-btn {
+  border: 1px solid #d4ebe9;
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #475569;
+  cursor: pointer;
+}
+
+.install-desired-at-modal-btn--primary {
+  border-color: var(--tl-accent);
+  background: var(--tl-accent);
+  color: #fff;
+}
+
+.install-confirmation-datetime-split .install-confirmation-input--date::-webkit-calendar-picker-indicator,
+.install-confirmation-datetime-split .install-confirmation-input--time::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.install-confirmation-datetime-split .install-confirmation-input--date::-moz-calendar-picker-indicator,
+.install-confirmation-datetime-split .install-confirmation-input--time::-moz-calendar-picker-indicator {
+  display: none;
+}
+
+.install-confirmation-input--qty {
+  text-align: center;
+}
+
+.install-confirmation-textarea {
+  width: 100%;
+  min-height: 72px;
+  border: 1px solid var(--tl-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #334155;
+  resize: vertical;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.install-confirmation-textarea:focus {
+  outline: none;
+  border-color: var(--tl-accent);
+}
+
+.install-confirmation-product-table thead th {
+  background: var(--tl-accent-light);
+  color: var(--tl-accent-dark);
+}
+
+.install-confirmation-qty-cell {
+  text-align: center;
+}
+
+.install-confirmation-product-summary {
+  display: none;
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #334155;
+  border: 1px solid var(--tl-border);
+  border-radius: 8px;
+  background: #fff;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.install-confirmation-diagram {
+  display: grid;
+  grid-template-columns: 1fr 96px;
+  gap: 0;
+  flex: 1;
+  border: 1px solid var(--tl-border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 240px;
+}
+
+.install-confirmation-diagram-help {
+  margin: -4px 0 8px;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.install-confirmation-diagram-canvas {
+  position: relative;
+  display: block;
+  min-height: 240px;
+  background: #fff;
+  border-right: 1px solid var(--tl-border);
+  touch-action: none;
+}
+
+.install-confirmation-diagram-canvas.is-tool-selected {
+  cursor: crosshair;
+  background: #f8fffe;
+}
+
+.install-confirmation-diagram-canvas.is-drag-over {
+  outline: 2px dashed var(--tl-accent);
+  outline-offset: -2px;
+  background: #f8fcfb;
+}
+
+.install-confirmation-diagram-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 12px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.install-confirmation-diagram-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  touch-action: none;
+  z-index: 1;
+}
+
+.install-confirmation-diagram-marker.is-dragging {
+  z-index: 2;
+}
+
+.install-confirmation-diagram-marker-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: grab;
+}
+
+.install-confirmation-diagram-marker.is-dragging
+  .install-confirmation-diagram-marker-body {
+  cursor: grabbing;
+}
+
+.install-confirmation-diagram-marker-delete {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid #fca5a5;
+  border-radius: 50%;
+  background: #fff;
+  color: #dc2626;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+.install-confirmation-diagram-marker-delete:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+}
+
+.install-confirmation-diagram-marker-body:focus-visible {
+  outline: 2px solid var(--tl-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.install-confirmation-diagram-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 6px;
+  background: var(--tl-accent-light);
+  overflow-y: auto;
+}
+
+.install-confirmation-diagram-tool {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid var(--tl-border);
+  border-radius: 6px;
+  padding: 5px 3px;
+  font-size: 9px;
+  font-family: inherit;
+  color: var(--tl-accent-dark);
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.install-confirmation-diagram-tool:hover {
+  border-color: var(--tl-accent);
+  background: #f0faf9;
+}
+
+.install-confirmation-diagram-tool.is-selected {
+  border-color: var(--tl-accent);
+  background: #e8f4f3;
+  box-shadow: inset 0 0 0 2px var(--tl-accent);
+}
+
+.install-confirmation-diagram-tool--draggable {
+  cursor: grab;
+}
+
+.install-confirmation-diagram-tool--draggable:active {
+  cursor: grabbing;
+}
+
+.install-confirmation-diagram-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #64748b;
+  border-radius: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  color: #334155;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.install-confirmation-diagram-icon--dvr {
+  font-size: 9px;
+}
+
+.install-confirmation-diagram-icon--indoor {
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+}
+
+.install-confirmation-diagram-icon--outdoor::before {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 10px;
+  border: 2px solid #334155;
+  border-radius: 2px;
+}
+
+.install-confirmation-diagram-icon--monitor {
+  font-size: 7px;
+}
+
+.install-confirmation-diagram-icon--monitor::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  width: 12px;
+  height: 2px;
+  background: #334155;
+  border-radius: 1px;
+}
+
+.install-confirmation-diagram-icon--router {
+  font-size: 8px;
+}
+
+.install-confirmation-diagram-icon--barrier::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 3px;
+  background: #334155;
+  border-radius: 1px;
+  transform: rotate(-32deg);
+}
+
+.install-confirmation-diagram-icon--kiosk {
+  width: 22px;
+  height: 30px;
+  font-size: 9px;
+}
+
+.install-confirmation-terms {
+  border: 1px solid var(--tl-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #334155;
+  background: #fff;
+}
+
+.install-confirmation-terms-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.install-confirmation-terms-list li + li {
+  margin-top: 2px;
+}
+
+.install-confirmation-terms-confirm {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 6px;
+  color: #dc2626;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.install-confirmation-terms-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.install-confirmation-checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #dc2626;
+  cursor: pointer;
+}
+
+.install-confirmation-terms-footer {
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.install-confirmation-sign-table {
+  table-layout: fixed;
+}
+
+.install-confirmation-sign-col-label {
+  width: 88px;
+}
+
+.install-confirmation-sign-col-dealer {
+  width: 28%;
+}
+
+.install-confirmation-sign-col-designer {
+  width: 16%;
+}
+
+.install-confirmation-sign-col-phone {
+  width: 22%;
+}
+
+.install-confirmation-sign-table th[scope="row"] {
+  width: 88px;
+}
+
+.install-confirmation-dealer-cell {
+  min-width: 140px;
+  white-space: nowrap;
+}
+
+.install-confirmation-sign-cell {
+  min-height: 48px;
+  text-align: center;
+  color: #64748b;
+}
+
+.install-confirmation-input--sign {
+  min-height: 36px;
+  text-align: center;
+}
+
+.install-confirmation-input--sign::placeholder {
+  color: #94a3b8;
+}
+
+.install-confirmation-supplier-line {
+  margin: 4px 0 0;
+  text-align: right;
+  font-size: 12px;
+  color: #334155;
+}
+
+.install-confirmation-photo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.install-confirmation-photo-header .install-confirmation-section-title {
+  margin-bottom: 0;
+}
+
+.install-confirmation-photo-upload {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.install-confirmation-photo-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.install-confirmation-photo-table th,
+.install-confirmation-photo-table td {
+  vertical-align: middle;
+}
+
+.install-confirmation-photo-table {
+  table-layout: auto;
+}
+
+.install-confirmation-photo-table th {
+  width: auto;
+}
+
+.install-confirmation-photo-no {
+  width: 44px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.install-confirmation-photo-name {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+
+.install-confirmation-photo-date {
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.install-confirmation-photo-empty {
+  text-align: center;
+  color: #94a3b8;
+  padding: 18px 12px !important;
+}
+
+.install-confirmation-photo-thumb-link {
+  display: inline-flex;
+}
+
+.install-confirmation-photo-thumb,
+.install-confirmation-photo-thumb-placeholder {
+  display: block;
+  width: 72px;
+  height: 54px;
+  border-radius: 6px;
+  border: 1px solid var(--tl-border);
+  object-fit: cover;
+  background: #f8fafc;
+}
+
+.install-confirmation-photo-thumb-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.install-confirmation-photo-delete-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.install-confirmation-print-shell {
+  width: 100%;
+}
+
+.install-confirmation-print-portal {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 210mm;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body.is-downloading-install-confirm .install-confirmation-no-print {
+  display: none !important;
+}
+
+body.is-downloading-install-confirm .install-confirmation-product-table {
+  display: none;
+}
+
+body.is-downloading-install-confirm .install-confirmation-product-summary {
+  display: block;
+}
+
+body.is-downloading-install-confirm .install-confirmation-form {
+  background: #fff;
+}
+
+/* Off-screen download capture (html2canvas) */
+.install-confirmation-capture-portal {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 210mm;
+  padding: 8mm 10mm;
+  box-sizing: border-box;
+  overflow: visible;
+  pointer-events: none;
+  background: #fff;
+  opacity: 1;
+  display: block;
+}
+
+.install-confirmation-capture-portal .install-confirmation-print-shell {
+  width: 100%;
+}
+
+.install-confirmation-capture-portal .install-confirmation-form {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: block;
+  background: #fff;
+}
+
+.install-confirmation-capture-portal .install-confirmation-form-header {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+}
+
+.install-confirmation-capture-portal .install-confirmation-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: auto;
+}
+
+.install-confirmation-capture-portal .install-confirmation-card--info {
+  order: 1;
+}
+
+.install-confirmation-capture-portal .install-confirmation-card--delivery {
+  order: 2;
+}
+
+.install-confirmation-capture-portal .install-confirmation-card--product {
+  order: 3;
+}
+
+.install-confirmation-capture-portal .install-confirmation-card--diagram {
+  order: 4;
+  display: flex;
+  flex-direction: column;
+}
+
+.install-confirmation-capture-portal .install-confirmation-card--construction {
+  order: 4;
+}
+
+.install-confirmation-capture-portal .install-confirmation-card--terms {
+  order: 5;
+}
+
+.install-confirmation-capture-portal .install-confirmation-product-table {
+  display: none;
+}
+
+.install-confirmation-capture-portal .install-confirmation-product-summary {
+  display: block;
+}
+
+.install-confirmation-capture-portal .install-confirmation-diagram {
+  flex: 1 1 auto;
+  min-height: 140px;
+  grid-template-columns: 1fr;
+}
+
+.install-confirmation-capture-portal .install-confirmation-diagram-canvas {
+  min-height: 0;
+  height: 100%;
+}
+
+.install-confirmation-capture-portal .install-confirmation-textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 56px;
+}
+
+.install-confirmation-capture-portal .install-confirmation-card {
+  width: 100%;
+  align-self: stretch;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+@media (max-width: 1023px) {
+  .install-confirmation-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .install-confirmation-form {
+    padding: 12px 14px 16px;
+  }
+
+  .install-confirmation-form-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+
+  .install-confirmation-form-title {
+    text-align: left;
+    font-size: 17px;
+    letter-spacing: 0;
+  }
+
+  .install-confirmation-form-actions {
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    width: 100%;
+  }
+
+  .install-confirmation-form-actions .contractor-info-action-btn:last-child {
+    margin-left: auto;
+  }
+
+  .install-confirmation-card {
+    padding: 12px;
+  }
+
+  .install-confirmation-card--diagram {
+    min-height: 220px;
+  }
+
+  .install-confirmation-diagram {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .install-confirmation-diagram-canvas {
+    min-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--tl-border);
+  }
+
+  .install-confirmation-diagram-tools {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    overflow-y: visible;
+  }
+
+  .install-confirmation-method-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .install-confirmation-diagram-tool {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 0;
+    justify-content: center;
+    padding: 8px 6px;
+    font-size: 11px;
+  }
+
+  .contractor-info-mobile-edit .contractor-info-mobile-field--stacked {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-method-options {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 4px;
+    width: 100%;
+    padding: 0 4px;
+    box-sizing: border-box;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-method-option {
+    font-size: 11px;
+    gap: 3px;
+    white-space: nowrap;
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-datetime-split {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-input,
+  .contractor-info-mobile-edit .install-confirmation-textarea {
+    border: none;
+    border-bottom: 1px solid var(--tl-accent);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-input:focus,
+  .contractor-info-mobile-edit .install-confirmation-textarea:focus {
+    background: transparent;
+    outline: none;
+    border-bottom-color: var(--tl-accent-dark);
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-input::placeholder,
+  .contractor-info-mobile-edit .install-confirmation-textarea::placeholder {
+    color: transparent;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-input--sign {
+    text-align: left;
+    min-height: 0;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-info-mobile-fields,
+  .contractor-info-mobile-edit .install-confirmation-sign-mobile-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-info-table,
+  .contractor-info-mobile-edit .install-confirmation-sign-table {
+    display: none;
+  }
+
+  .contractor-info-mobile-edit .contractor-info-mobile-field dd {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #334155;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-date-cell {
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-terms {
+    font-size: 12px;
+    line-height: 1.65;
+    padding: 12px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-terms-list li + li {
+    margin-top: 8px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-terms-confirm {
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-terms-footer {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-card--product .install-confirmation-product-summary {
+    display: none;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table {
+    border: none;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table thead {
+    display: none;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "item item"
+      "model model"
+      "requested installed";
+    gap: 6px 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef2f2;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody tr:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td {
+    border: none;
+    padding: 0;
+    background: transparent;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(1) {
+    grid-area: item;
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(1)::before {
+    display: none;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(2) {
+    grid-area: model;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(2)::before {
+    content: "모델";
+    flex: 0 0 36px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tl-muted);
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(3) {
+    grid-area: requested;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #475569;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(3)::before {
+    content: "의뢰";
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tl-muted);
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(4) {
+    grid-area: installed;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table tbody td:nth-child(4)::before {
+    content: "설치";
+    flex: 0 0 36px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tl-muted);
+  }
+
+  .contractor-info-mobile-edit
+    .install-confirmation-product-table--completion
+    tbody
+    td:nth-child(4)::before {
+    content: "준공";
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-product-table .install-confirmation-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .install-confirmation-supplier-line {
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-form {
+    padding: 12px 10px 14px;
+  }
+
+  .contractor-info-mobile-edit .install-confirmation-print-shell {
+    min-width: 0;
+  }
+}
+
+.install-confirmation-info-mobile-fields,
+.install-confirmation-sign-mobile-fields {
+  display: none;
+}
+
+.install-confirmation-info-mobile-group {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid #eef2f2;
+}
+
+.install-confirmation-info-mobile-group-title {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tl-accent-dark);
+}
+
+body.is-printing-install-confirm .install-confirmation-info-mobile-fields,
+body.is-downloading-install-confirm .install-confirmation-info-mobile-fields,
+body.is-printing-install-confirm .install-confirmation-sign-mobile-fields,
+body.is-downloading-install-confirm .install-confirmation-sign-mobile-fields {
+  display: none !important;
+}
+
+body.is-printing-install-confirm .install-confirmation-info-table,
+body.is-downloading-install-confirm .install-confirmation-info-table,
+body.is-printing-install-confirm .install-confirmation-sign-table,
+body.is-downloading-install-confirm .install-confirmation-sign-table {
+  display: table !important;
+}
+
+@media print {
+  /* A4 portrait 210×297mm; content area 190×281mm via .install-confirmation-form padding */
+  @page {
+    size: 210mm 297mm;
+    margin: 0;
+  }
+
+  body.is-printing-install-confirm {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 297mm !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body.is-printing-install-confirm .tl-dashboard-shell {
+    display: none !important;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-print-portal {
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    pointer-events: auto !important;
+    z-index: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  html,
+  body {
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-no-print {
+    display: none !important;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-print-shell {
+    width: 210mm;
+    height: auto;
+    min-height: 0;
+    max-height: 297mm;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+    display: block;
+    overflow: hidden;
+    background: transparent !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-form {
+    position: static;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    max-height: 281mm;
+    margin: 0;
+    padding: 8mm 10mm;
+    box-sizing: border-box;
+    display: block;
+    background: transparent !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @supports not (zoom: 1) {
+    body.is-printing-install-confirm .install-confirmation-form {
+      transform: none;
+    }
+  }
+
+  body.is-printing-install-confirm .install-confirmation-form-header {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    background: transparent !important;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-form-title {
+    font-size: 18px;
+    letter-spacing: 0.04em;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    height: auto;
+    min-height: 0 !important;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-column {
+    display: contents;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-card--info {
+    order: 1;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-card--delivery {
+    order: 2;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-card--product {
+    order: 3;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-card--diagram {
+    order: 4;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    height: 55mm;
+    min-height: 55mm;
+    max-height: 55mm;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-card--construction {
+    order: 4;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-card--terms {
+    order: 5;
+    flex: none;
+    gap: 4px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-product-table {
+    display: none;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-product-summary {
+    display: block;
+    padding: 5px 7px;
+    font-size: 10px;
+    line-height: 1.35;
+    border-radius: 6px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-card {
+    width: 100%;
+    align-self: stretch;
+    box-sizing: border-box;
+    padding: 7px 9px;
+    border-radius: 6px;
+    background: #fff !important;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-section-title {
+    margin-bottom: 4px;
+    font-size: 11px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-table {
+    font-size: 11px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-table th,
+  body.is-printing-install-confirm .install-confirmation-table td {
+    padding: 2px 4px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-method-options {
+    gap: 2px 8px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-method-option {
+    font-size: 9px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-input {
+    font-size: 9px;
+    padding: 0 2px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-product-table td,
+  body.is-printing-install-confirm .install-confirmation-product-table th {
+    padding: 2px 4px;
+    vertical-align: middle;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 56px;
+    padding: 5px 7px;
+    font-size: 10px;
+    line-height: 1.3;
+    resize: none;
+    overflow: hidden;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-diagram {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-diagram-canvas {
+    min-height: 0;
+    height: 100%;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-diagram-placeholder {
+    font-size: 9px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-diagram-tools {
+    gap: 2px;
+    padding: 3px 2px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-diagram-tool {
+    gap: 1px;
+    padding: 2px 1px;
+    font-size: 7px;
+    border-radius: 3px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-diagram-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 6px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-diagram-icon--indoor {
+    width: 16px;
+    height: 16px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-terms {
+    padding: 6px 8px;
+    font-size: 10.5px;
+    line-height: 1.45;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-terms-list {
+    margin: 0;
+    padding-left: 14px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-terms-list li + li {
+    margin-top: 1px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-terms-confirm {
+    margin: 4px 0 3px;
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-checkbox {
+    width: 13px;
+    height: 13px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-terms-footer {
+    margin: 0;
+    font-size: 10px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-sign-table {
+    margin-top: 4px;
+    font-size: 10px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-input--sign {
+    min-height: 22px;
+    font-size: 10px;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-sign-cell {
+    min-height: 0;
+  }
+
+  body.is-printing-install-confirm .install-confirmation-supplier-line {
+    margin: 2px 0 0;
+    padding: 0;
+    font-size: 9px;
+  }
+}
+
+.install-confirmation-date-blank {
+  display: inline-block;
+  min-width: 28px;
+  border-bottom: 1px solid #334155;
+  margin: 0 2px;
+}
+
+.contract-manage-stage-badge-btn {
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.contract-manage-stage-badge-btn:hover {
+  opacity: 0.85;
+}
+
+.contract-manage-stage-badge-btn:active {
+  transform: scale(0.98);
+}
+
+.contract-manage-col-stage {
+  width: 108px;
+  min-width: 108px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px 4px;
+  box-sizing: border-box;
+}
+
+.contract-manage-col-stage .tl-badge {
+  display: inline-flex;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.contract-manage-col-stage .contract-manage-stage-badge-btn {
+  display: inline-block;
+}
+
+.progress-stage-modal-panel {
+  max-width: 32rem;
+}
+
+.progress-stage-modal-body {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.progress-stage-modal-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.progress-stage-modal-option {
+  width: 100%;
+  border: 1px solid #d4ebe9;
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #475569;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.progress-stage-modal-footer {
+  justify-content: flex-end;
+  gap: 0;
+}
+
+.contractor-info-data-row.is-saved .contractor-info-cell-saved-start::before {
+  left: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+.contractor-info-data-row.is-saved .contractor-info-cell-saved-end::before {
+  right: 0;
+  border-radius: 0 10px 10px 0;
+}
+
+.progress-stage-modal-option:hover:not(:disabled) {
+  border-color: var(--tl-accent);
+  color: var(--tl-accent-dark);
+  background: #f0faf9;
+}
+
+.progress-stage-modal-option.is-selected {
+  border-color: var(--tl-accent);
+  background: #e8f4f3;
+  color: var(--tl-accent-dark);
+}
+
+.progress-stage-modal-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contractor-info-table-wrap {
+  margin-top: 4px;
+}
+
+.contractor-info-table.tl-member-table {
+  table-layout: auto;
+  width: 100%;
+  max-width: 100%;
+}
+
+.contractor-info-table--construction-manage {
+  table-layout: fixed;
+}
+
+.contractor-info-table--construction-manage .install-manage-col-stage-col {
+  width: 108px;
+}
+
+.contractor-info-table--construction-manage .install-manage-col-start-col,
+.contractor-info-table--construction-manage .install-manage-col-complete-col {
+  width: 76px;
+}
+
+.contractor-info-table thead th {
+  background: transparent;
+  white-space: nowrap;
+}
+
+.contractor-info-table thead th.contract-manage-col-stage,
+.contractor-info-table thead th.install-manage-col-start,
+.contractor-info-table thead th.install-manage-col-complete,
+.contract-manage-col-stage,
+.install-manage-col-start,
+.install-manage-col-complete {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px 4px;
+  box-sizing: border-box;
+}
+
+.contractor-info-table tbody td {
+  background: transparent;
+  white-space: nowrap;
+}
+
+.contractor-info-col-no {
+  min-width: 140px;
+}
+
+.contractor-info-col-type {
+  min-width: 64px;
+}
+
+.contractor-info-col-name {
+  min-width: 140px;
+}
+
+.contractor-info-col-service {
+  min-width: 100px;
+}
+
+.contractor-info-col-mobile {
+  min-width: 132px;
+}
+
+.contractor-info-col-address {
+  min-width: 280px;
+}
+
+.contractor-info-address-text {
+  display: inline-block;
+  max-width: none;
+  white-space: nowrap;
+}
+
+.contractor-info-col-payment {
+  min-width: 120px;
+}
+
+.contractor-info-col-date {
+  min-width: 168px;
+}
+
+.contractor-info-col-action {
+  min-width: 96px;
+}
+
+.contractor-info-cell-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contractor-info-action-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--tl-accent-dark);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contractor-info-action-btn:hover:not(:disabled) {
+  color: var(--tl-accent);
+  text-decoration: underline;
+}
+
+.contractor-info-action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.contractor-info-action-btn--muted {
+  color: var(--tl-muted);
+}
+
+.contractor-info-action-btn--muted:hover:not(:disabled) {
+  color: var(--tl-accent-dark);
+}
+
+.contractor-info-data-row.is-saved .contractor-info-col-no {
+  position: relative;
+  z-index: 2;
+  background: #fff;
+}
+
+.contractor-info-cell-saved {
+  position: relative;
+  background: transparent !important;
+}
+
+.contractor-info-cell-saved::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  background: #14918b;
+}
+
+.contractor-info-data-row.is-saved .contractor-info-col-type.contractor-info-cell-saved::before {
+  left: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+.contractor-info-data-row.is-saved .contractor-info-col-action.contractor-info-cell-saved::before {
+  right: 0;
+  border-radius: 0 10px 10px 0;
+}
+
+.contractor-info-cell-saved > * {
+  position: relative;
+  z-index: 1;
+  visibility: hidden;
+}
+
+.contractor-info-cell-saved-msg::after {
+  content: "저장되었습니다.";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.contractor-info-col-action.contractor-info-cell-saved > * {
+  visibility: hidden;
+}
+
+.contractor-info-edit-row td {
+  padding: 0;
+  white-space: normal;
+  vertical-align: top;
+  background: #fff;
+  border-bottom: 1px solid #d4ebe9;
+}
+
+.contractor-info-edit-panel {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 20px 24px 12px;
+  box-sizing: border-box;
+}
+
+.contractor-info-edit-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: var(--cf-inline-width, 1140px);
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--tl-accent);
+}
+
+.contractor-info-edit-panel-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tl-accent-dark);
+}
+
+.contractor-info-action-btn.is-active {
+  text-decoration: underline;
+}
+
+.contractor-info-page {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.tl-member-table {
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.tl-member-table th,
+.tl-member-table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  text-align: left;
+}
+
+.tl-member-table th {
+  font-weight: 600;
+}
+
+.tl-member-table .tl-col-id {
+  width: 8%;
+}
+
+.tl-member-table .tl-col-company {
+  width: 14%;
+}
+
+.tl-member-table .tl-col-name {
+  width: 10%;
+}
+
+.tl-member-table .tl-col-bizno {
+  width: 12%;
+}
+
+.tl-member-table .tl-col-status {
+  width: 7%;
+}
+
+.tl-member-table .tl-col-date {
+  width: 15%;
+}
+
+.tl-member-table .tl-col-detail {
+  width: 20%;
+}
+
+.tl-member-table .tl-col-action {
+  width: 14%;
+}
+
+.tl-member-table .tl-col-center {
+  text-align: center;
+}
+
+.tl-member-table .tl-cell-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* 설치 관리 — 모바일 카드 (계약자 정보와 동일 스타일) */
+.contractor-info-mobile-list {
+  margin-top: 4px;
+}
+
+.contractor-info-mobile-card {
+  border: 1px solid #d4ebe9;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.contractor-info-mobile-card.is-saved {
+  box-shadow: inset 0 0 0 2px #a7f3d0;
+}
+
+.contractor-info-mobile-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border-bottom: 1px solid #d4ebe9;
+}
+
+.contractor-info-mobile-card-no {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tl-accent-dark);
+}
+
+.contractor-info-mobile-card-no-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.contractor-info-mobile-card-saved {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--tl-accent);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.contractor-info-mobile-card-fields {
+  margin: 0;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contractor-info-mobile-field {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 8px;
+  align-items: start;
+  font-size: 13px;
+}
+
+.contractor-info-mobile-field dt {
+  margin: 0;
+  font-weight: 600;
+  color: var(--tl-muted);
+}
+
+.contractor-info-mobile-field dd {
+  margin: 0;
+  color: #475569;
+  word-break: break-word;
+}
+
+.contractor-info-mobile-edit {
+  border-top: 1px solid #d4ebe9;
+  background: #fff;
+  overflow-x: hidden;
+}
+
+.install-manage-mobile-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: 10px 14px 12px;
+  border-top: 1px solid #eef2f2;
+  margin-top: 2px;
+}
+
+.install-manage-mobile-actions .install-manage-mobile-stage-badge,
+.install-manage-mobile-actions .install-manage-pill-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  border-radius: 9999px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.install-manage-mobile-actions .install-manage-mobile-stage-badge {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1023px) {
+  .contractor-info-page--construction-manage {
+    overflow-x: visible;
+  }
+
+  .contractor-info-page--construction-manage .contractor-info-search {
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .contractor-info-page--construction-manage .contractor-info-search-input {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .contractor-info-page--construction-manage .contractor-info-search-btn {
+    flex-shrink: 0;
+    padding-bottom: 8px;
+  }
+}
