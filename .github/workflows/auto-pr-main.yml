@@ -21,6 +21,22 @@ jobs:
             const base = 'main';
             const { owner, repo } = context.repo;
 
+            const { data: comparison } = await github.rest.repos.compareCommits({
+              owner,
+              repo,
+              base,
+              head: branch,
+            });
+
+            if (comparison.ahead_by === 0) {
+              core.info(
+                `develop에 main 대비 새 커밋 없음 (behind ${comparison.behind_by}) — 자동 머지 스킵`,
+              );
+              return;
+            }
+
+            core.info(`develop is ${comparison.ahead_by} commit(s) ahead of main`);
+
             const { data: prs } = await github.rest.pulls.list({
               owner,
               repo,
@@ -57,7 +73,7 @@ jobs:
             }
 
             async function getMergeability(pullNumber) {
-              for (let attempt = 0; attempt < 6; attempt++) {
+              for (let attempt = 0; attempt < 10; attempt++) {
                 const { data } = await github.rest.pulls.get({
                   owner,
                   repo,
@@ -73,12 +89,38 @@ jobs:
               }).then((res) => res.data);
             }
 
-            const prDetails = await getMergeability(pr.number);
+            let prDetails = await getMergeability(pr.number);
 
-            if (prDetails.mergeable === false || prDetails.mergeable_state === 'dirty') {
+            if (prDetails.mergeable_state === 'behind') {
+              core.info(`PR #${pr.number} is behind main — updateBranch 시도`);
+              try {
+                await github.rest.pulls.updateBranch({
+                  owner,
+                  repo,
+                  pull_number: pr.number,
+                });
+                await new Promise((resolve) => setTimeout(resolve, 5000));
+                prDetails = await getMergeability(pr.number);
+              } catch (error) {
+                core.warning(`updateBranch 실패: ${error.message}`);
+              }
+            }
+
+            if (prDetails.mergeable === false) {
+              if (prDetails.mergeable_state === 'dirty') {
+                core.setFailed(
+                  `PR #${pr.number}에 충돌이 있습니다. develop에서 origin/main을 merge한 뒤 다시 push하세요.`,
+                );
+                return;
+              }
+              if (prDetails.mergeable_state === 'blocked') {
+                core.setFailed(
+                  `PR #${pr.number} 머지가 차단되었습니다. main 브랜치 보호 규칙(필수 리뷰/체크)을 확인하세요.`,
+                );
+                return;
+              }
               core.setFailed(
-                `PR #${pr.number}에 충돌이 있어 자동 머지를 건너뜁니다. ` +
-                  '충돌을 해결한 뒤 develop에 다시 push하세요.'
+                `PR #${pr.number}을 머지할 수 없습니다 (state: ${prDetails.mergeable_state ?? 'unknown'}).`,
               );
               return;
             }
@@ -95,6 +137,6 @@ jobs:
             } catch (error) {
               core.setFailed(
                 `PR #${pr.number} 머지 실패: ${error.message}\n` +
-                  '충돌 해결 또는 main 브랜치 보호 규칙을 확인하세요.'
+                  '충돌 해결 또는 main 브랜치 보호 규칙을 확인하세요.',
               );
             }
