@@ -4,6 +4,7 @@ import jwt, { SignOptions } from "jsonwebtoken";
 import { getPool } from "../db/pool";
 import { normalizeEmail } from "./email";
 import { authenticate } from "./middleware";
+import { handleCompleteSwitch, handleSwitchApp } from "./switchApp";
 
 const router = Router();
 const APP_CODE = process.env.APP_CODE || "eng";
@@ -153,6 +154,14 @@ router.post("/login", async (req: Request, res: Response) => {
       app: access.app_code,
     },
   });
+});
+
+router.post("/switch-app", authenticate, async (req: Request, res: Response) => {
+  await handleSwitchApp(req, res, APP_CODE);
+});
+
+router.post("/complete-switch", async (req: Request, res: Response) => {
+  await handleCompleteSwitch(req, res, APP_CODE);
 });
 
 router.get("/me", authenticate, async (req: Request, res: Response) => {
