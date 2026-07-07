@@ -17,26 +17,18 @@ export const INS_API_URL =
 
 export type ProjectCode = "op" | "ins" | "eng";
 
+export const JK_OP_URL = process.env.NEXT_PUBLIC_JK_OP_URL ?? "http://localhost:3001";
+export const JK_INS_URL = process.env.NEXT_PUBLIC_JK_INS_URL ?? "http://localhost:3000";
+export const JK_ENG_URL = process.env.NEXT_PUBLIC_JK_ENG_URL ?? "http://localhost:3002";
+
 export const PROJECT_APPS: {
   code: ProjectCode;
   label: string;
   url: string;
 }[] = [
-  {
-    code: "op",
-    label: "JK-OP",
-    url: process.env.NEXT_PUBLIC_JK_OP_URL ?? "http://localhost:3001",
-  },
-  {
-    code: "ins",
-    label: "JK-INS",
-    url: process.env.NEXT_PUBLIC_JK_INS_URL ?? "http://localhost:3000",
-  },
-  {
-    code: "eng",
-    label: "JK-ENG",
-    url: process.env.NEXT_PUBLIC_JK_ENG_URL ?? "http://localhost:3002",
-  },
+  { code: "op", label: "JK-OP", url: JK_OP_URL },
+  { code: "ins", label: "JK-INS", url: JK_INS_URL },
+  { code: "eng", label: "JK-ENG", url: JK_ENG_URL },
 ];
 
 export const DASHBOARD_ITEMS: { title: string; desc: string }[] = [];

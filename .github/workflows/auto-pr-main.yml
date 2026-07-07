@@ -1,0 +1,163 @@
+name: Auto PR to main
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  open-pull-request:
+    runs-on: ubuntu-latest
+    outputs:
+      merged: ${{ steps.merge.outputs.merged }}
+    steps:
+      - name: Create PR and merge into main when mergeable
+        id: merge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = 'develop';
+            const base = 'main';
+            const { owner, repo } = context.repo;
+
+            const { data: comparison } = await github.rest.repos.compareCommits({
+              owner,
+              repo,
+              base,
+              head: branch,
+            });
+
+            if (comparison.ahead_by === 0) {
+              core.info(
+                `develop에 main 대비 새 커밋 없음 (behind ${comparison.behind_by}) — 자동 머지 스킵`,
+              );
+              core.setOutput('merged', 'false');
+              return;
+            }
+
+            core.info(`develop is ${comparison.ahead_by} commit(s) ahead of main`);
+
+            const { data: prs } = await github.rest.pulls.list({
+              owner,
+              repo,
+              head: `${owner}:${branch}`,
+              base,
+              state: 'open',
+            });
+
+            let pr;
+            if (prs.length === 0) {
+              const { data } = await github.rest.pulls.create({
+                owner,
+                repo,
+                title: `[develop] → main`,
+                head: branch,
+                base,
+                body: [
+                  '## 자동 PR (production)',
+                  '',
+                  '`develop` 변경사항을 `main`에 반영합니다.',
+                  '',
+                  `- 커밋: \`${context.sha.substring(0, 7)}\``,
+                  `- 푸시: ${new Date().toISOString()}`,
+                  '',
+                  '충돌이 없으면 squash merge 후 서버 자동 배포가 실행됩니다.',
+                  '충돌이 있으면 PR은 열린 채로 남고 배포되지 않습니다.',
+                ].join('\n'),
+              });
+              pr = data;
+              core.info(`Created PR #${pr.number}`);
+            } else {
+              pr = prs[0];
+              core.info(`PR #${pr.number} already open — push로 PR이 갱신됩니다.`);
+            }
+
+            async function getMergeability(pullNumber) {
+              for (let attempt = 0; attempt < 10; attempt++) {
+                const { data } = await github.rest.pulls.get({
+                  owner,
+                  repo,
+                  pull_number: pullNumber,
+                });
+                if (data.mergeable !== null) return data;
+                await new Promise((resolve) => setTimeout(resolve, 3000));
+              }
+              return github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: pullNumber,
+              }).then((res) => res.data);
+            }
+
+            let prDetails = await getMergeability(pr.number);
+
+            if (prDetails.mergeable_state === 'behind') {
+              core.info(`PR #${pr.number} is behind main — updateBranch 시도`);
+              try {
+                await github.rest.pulls.updateBranch({
+                  owner,
+                  repo,
+                  pull_number: pr.number,
+                });
+                await new Promise((resolve) => setTimeout(resolve, 5000));
+                prDetails = await getMergeability(pr.number);
+              } catch (error) {
+                core.warning(`updateBranch 실패: ${error.message}`);
+              }
+            }
+
+            if (prDetails.mergeable === false) {
+              if (prDetails.mergeable_state === 'dirty') {
+                core.setFailed(
+                  `PR #${pr.number}에 충돌이 있습니다. develop에서 origin/main을 merge한 뒤 다시 push하세요.`,
+                );
+                return;
+              }
+              if (prDetails.mergeable_state === 'blocked') {
+                core.setFailed(
+                  `PR #${pr.number} 머지가 차단되었습니다. main 브랜치 보호 규칙(필수 리뷰/체크)을 확인하세요.`,
+                );
+                return;
+              }
+              core.setFailed(
+                `PR #${pr.number}을 머지할 수 없습니다 (state: ${prDetails.mergeable_state ?? 'unknown'}).`,
+              );
+              return;
+            }
+
+            try {
+              await github.rest.pulls.merge({
+                owner,
+                repo,
+                pull_number: pr.number,
+                merge_method: 'squash',
+                commit_title: `[develop] → main`,
+              });
+              core.info(`Merged PR #${pr.number} into ${base}`);
+              core.setOutput('merged', 'true');
+            } catch (error) {
+              core.setFailed(
+                `PR #${pr.number} 머지 실패: ${error.message}\n` +
+                  '충돌 해결 또는 main 브랜치 보호 규칙을 확인하세요.',
+              );
+            }
+
+  deploy:
+    needs: open-pull-request
+    if: needs.open-pull-request.outputs.merged == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy jk-eng on ckurity server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          script: |
+            cd ~/jk/jk-eng
+            bash scripts/deploy-production.sh
