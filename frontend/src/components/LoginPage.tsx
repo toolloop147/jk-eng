@@ -10,7 +10,7 @@ import { login } from "@/lib/api";
 
 import { setToken } from "@/lib/auth";
 
-import { APP_TITLE, PROJECT_APPS } from "@/lib/config";
+import { APP_TITLE, JK_INS_URL, JK_OP_URL } from "@/lib/config";
 
 import { formatPhoneInput } from "@/lib/formatPhone";
 
@@ -46,11 +46,8 @@ export function LoginPage() {
 
 
 
-  const opUrl = PROJECT_APPS.find((project) => project.code === "op")?.url ?? "http://localhost:3001";
-
-  const insUrl =
-
-    PROJECT_APPS.find((project) => project.code === "ins")?.url ?? "http://localhost:3000";
+  const opUrl = JK_OP_URL;
+  const insUrl = JK_INS_URL;
 
 
 
